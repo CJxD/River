@@ -1,24 +1,38 @@
 
-COMPILE=ocamlc -c
-BUILD=ocamlc -o
+OUTDIR=bin
+OBJECTS=objects
+LIBRARIES=lib
+
+CC=ocamlc
+CFLAGS=-c -I $(OBJECTS)/
 LEX=ocamllex
 YACC=ocamlyacc
 
-OUTDIR=bin
-
 all: build
 
-build: lexer parser river
-	$(BUILD) lexer.cmo parser.cmo river.cmo
+build: setup parser lexer river
+	$(CC) -o $(OUTDIR)/river $(OBJECTS)/lexer.cmo $(OBJECTS)/parser.cmo $(OBJECTS)/river.cmo
 
-river:
-	$(COMPILE) river.ml
+setup:
+	mkdir -p $(OUTDIR) $(OBJECTS)
 
-lexer:
-	$(LEX) lexer.mll
-	$(COMPILE) lexer.ml
+lib: setup
+	$(CC) $(CFLAGS) -o $(OBJECTS)/streams.cmo $(LIBRARIES)/streams.ml
 
-parser:
+objects/%.cmi: setup
+	$(CC) $(CFLAGS) -o $(OBJECTS)/$@ $(LIBRARIES)/$(addsuffix .ml, $(basename $@))
+
+parser: setup lib
 	$(YACC) parser.mly
-	$(COMPILE) parser.ml
-	$(COMPILE) parser.mli
+	$(CC) $(CFLAGS) -o $(OBJECTS)/parser.cmi parser.mli
+	$(CC) $(CFLAGS) -o $(OBJECTS)/parser.cmo parser.ml
+
+lexer: setup lib
+	$(LEX) lexer.mll
+	$(CC) $(CFLAGS) -o $(OBJECTS)/lexer.cmo lexer.ml
+
+river: setup lib
+	$(CC) $(CFLAGS) -o $(OBJECTS)/river.cmo river.ml
+
+clean:
+	rm -f $(OUTDIR)/* $(OBJECTS)/*
