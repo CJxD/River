@@ -1,38 +1,90 @@
 
-OUTDIR=bin
-OBJECTS=objects
-LIBRARIES=lib
+# Libraries directory
 
-CC=ocamlc
-CFLAGS=-c -I $(OBJECTS)/
+LIBDIR=lib
+
+# Output Directories
+
+BINDIR=bin
+OBJDIR=obj
+GENDIR=gen
+
+# Source .ml files to include in the build
+
+SOURCES = $(wildcard *.ml) $(wildcard $(LIBDIR)/*.ml)
+
+# Compiler/Lexer/Parser commands
+
+CC=ocamlc -I $(OBJDIR)
 LEX=ocamllex
 YACC=ocamlyacc
 
-all: build
+# Change .ml to .cmo in the sources list & add the object dir
 
-build: setup parser lexer river
-	$(CC) -o $(OUTDIR)/river $(OBJECTS)/lexer.cmo $(OBJECTS)/parser.cmo $(OBJECTS)/river.cmo
+OBJS = $(addprefix $(OBJDIR)/, $(SOURCES:.ml=.cmo))
 
-setup:
-	mkdir -p $(OUTDIR) $(OBJECTS)
+# Execute a full river build
 
-lib: setup
-	$(CC) $(CFLAGS) -o $(OBJECTS)/streams.cmo $(LIBRARIES)/streams.ml
+all: river
 
-objects/%.cmi: setup
-	$(CC) $(CFLAGS) -o $(OBJECTS)/$@ $(LIBRARIES)/$(addsuffix .ml, $(basename $@))
+# Link the interpreter
 
-parser: setup lib
-	$(YACC) parser.mly
-	$(CC) $(CFLAGS) -o $(OBJECTS)/parser.cmi parser.mli
-	$(CC) $(CFLAGS) -o $(OBJECTS)/parser.cmo parser.ml
+river: parser lexer $(OBJS) $(BINDIR)
+	@echo "-> Linking lexer, parser & objects"
+	$(CC) -o $(BINDIR)/$@ $(OBJDIR)/parser.cmo $(OBJDIR)/lexer.cmo $(OBJS)
+	@echo "---> Done"
 
-lexer: setup lib
-	$(LEX) lexer.mll
-	$(CC) $(CFLAGS) -o $(OBJECTS)/lexer.cmo lexer.ml
+# Compile Module Interface
 
-river: setup lib
-	$(CC) $(CFLAGS) -o $(OBJECTS)/river.cmo river.ml
+$(OBJDIR)/%.cmi: %.mli $(OBJDIR)
+	@echo "-> Compiling interface: $<"
+	$(CC) -o $@ -c $<
+
+# Compile Module
+
+$(OBJDIR)/%.cmo: %.ml $(OBJDIR)
+	@echo "-> Compiling module: $<"
+	$(CC) -o $@ -c $<
+	
+# Compile Module (Attempt to build its Interface first, dont think this will work)
+	
+$(OBJDIR)/%.cmo: %.ml $(OBJDIR)/%.cmi $(OBJDIR)
+	@echo "-> Compiling module: $<"
+	$(CC) -o $@ -c $<
+
+# Generate & compile the parser
+
+parser: parser.mly $(GENDIR) $(OBJDIR)
+	@echo "-> Generating parser..."
+	$(YACC) -b$(GENDIR)/parser -v $<
+	@echo "-> Compiling parser..."
+	$(CC) -o $(OBJDIR)/parser.cmi -c $(GENDIR)/parser.mli
+	$(CC) -o $(OBJDIR)/parser.cmo -c $(GENDIR)/parser.ml
+
+# Generate & compile the lexer
+
+lexer: lexer.mll $(GENDIR) $(OBJDIR)
+	@echo "-> Generating lexer..."
+	$(LEX) -o $(GENDIR)/lexer.ml $<
+	@echo "-> Compiling lexer..."
+	$(CC) -o $(OBJDIR)/lexer.cmo -c $(GENDIR)/lexer.ml
+
+# Create output directories
+
+$(OBJDIR):
+	@echo "-> Creating objects directory..." 
+	@mkdir $(OBJDIR)
+
+$(BINDIR):
+	@echo "-> Creating binaries directory..."
+	@mkdir $(BINDIR)
+
+$(GENDIR):
+	@echo "-> Creating generated files directory..."
+	@mkdir $(GENDIR)
+
+# Remove all generated Files
 
 clean:
-	rm -f $(OUTDIR)/* $(OBJECTS)/*
+	@echo "-> Removing build directories..."
+	@rm -rf $(BINDIR) $(OBJDIR) $(GENDIR)	
