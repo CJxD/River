@@ -7,3 +7,9 @@
 *.cmx
 *.cmxs
 *.cmxa
+
+# Ignore generated files
+
+bin/
+gen/
+obj/
