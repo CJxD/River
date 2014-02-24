@@ -4,13 +4,16 @@
 
 test = 2.6420663848363;
 
+// other comments
+
 if 3 == 4 then
 	if 2 == 9 then
 		var = 9.9;
-	else
+	else 
+		/* moar comment */
 		toes = 't';
 else 
-	while 1 == 1 do
+	while 1 == 1 do // this is horiffically syntax invalid £$%^&*
 		boolean = true;
    	
 

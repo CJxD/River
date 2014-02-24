@@ -1,5 +1,5 @@
 {
-    open Parser
+	open Parser
 }
 
 let white_space = [' ' '\t' '\n']
@@ -11,56 +11,61 @@ let bool = "true" | "false"
 let alphanum = ['a'-'z' '0'-'9' '_']*
 
 rule token = parse
-    
-    (* Lines & Whitespace *)
+	
+	(* Lines & Whitespace *)
 
-      white_space            { token lexbuf }
-    | eof                    { EOF }
-    | ';'                    { EOL }
+	  white_space 			{ token lexbuf }
+	| eof 					{ EOF }
+	| ';' 					{ EOL }
 
-    (* Literals *)
+	(* Comments *)
 
-    | int                    { INT(int_of_string (Lexing.lexeme lexbuf)) }
-    | float                  { FLOAT(float_of_string (Lexing.lexeme lexbuf)) }
-    | char                   { CHAR(String.get (Lexing.lexeme lexbuf) 1) }
-    | bool                   { BOOL(bool_of_string (Lexing.lexeme lexbuf)) }
-    | "true"                 { TRUE }
-    | "false"                { FALSE }
+	| "//" [^ '\n']* 		{ token lexbuf }
+	| "/*" _* "*/" 			{ token lexbuf }
 
-    (* Operators *)
+	(* Literals *)
 
-    | '+'                    { PLUS }
-    | '-'                    { MINUS }
-    | '*'                    { TIMES }
-    | '/'                    { DIV }
-    | '('                    { LPAREN }
-    | ')'                    { RPAREN }
-    | ':'                    { POINTER }
-    | '['                    { LBRACKET }
-    | ']'                    { RBRACKET }
-    | '='                    { ASSIGN }
-    | '>'                    { ANGLERIGHT }
-    | '<'                    { ANGLELEFT }
-    | '^'                    { XOR }
-    | '&'                    { AND }
-    | '|'                    { OR }
-    | ','                    { COMMA } 
-    | "++"                   { INCREMENT }
-    | "--"                   { DECREMENT }
-    | "->"                   { LAMBDA }
-    | "=="                   { EQ }
-    | ">="                   { GTE }
-    | "<="                   { LTE }
-    | "!="                   { NEQ }
+	| int 					{ INT(int_of_string (Lexing.lexeme lexbuf)) }
+	| float 				{ FLOAT(float_of_string (Lexing.lexeme lexbuf)) }
+	| char 					{ CHAR(String.get (Lexing.lexeme lexbuf) 1) }
+	| bool 					{ BOOL(bool_of_string (Lexing.lexeme lexbuf)) }
+	| "true" 				{ TRUE }
+	| "false" 				{ FALSE }
 
-    (* Keywords *)
+	(* Operators *)
 
-    | "if"                   { IF }
-    | "then"                 { THEN }
-    | "else"                 { ELSE }
-    | "while"                { WHILE }
-    | "do"                   { DO }
+	| '+' 					{ PLUS }
+	| '-' 					{ MINUS }
+	| '*' 					{ TIMES }
+	| '/' 					{ DIV }
+	| '(' 					{ LPAREN }
+	| ')' 					{ RPAREN }
+	| ':' 					{ POINTER }
+	| '[' 					{ LBRACKET }
+	| ']' 					{ RBRACKET }
+	| '=' 					{ ASSIGN }
+	| '>' 					{ ANGLERIGHT }
+	| '<' 					{ ANGLELEFT }
+	| '^' 					{ XOR }
+	| '&' 					{ AND }
+	| '|' 					{ OR }
+	| ',' 					{ COMMA } 
+	| "++" 					{ INCREMENT }
+	| "--" 					{ DECREMENT }
+	| "->" 					{ LAMBDA }
+	| "==" 					{ EQ }
+	| ">=" 					{ GTE }
+	| "<=" 					{ LTE }
+	| "!=" 					{ NEQ }
 
-    (* Identifiers *)
+	(* Keywords *)
 
-    | ['a'-'z'] alphanum*    { IDENT(Lexing.lexeme lexbuf) }
+	| "if" 					{ IF }
+	| "then" 				{ THEN }
+	| "else" 				{ ELSE }
+	| "while" 				{ WHILE }
+	| "do" 					{ DO }
+
+	(* Identifiers *)
+
+	| ['a'-'z'] alphanum* 	{ IDENT(Lexing.lexeme lexbuf) }
