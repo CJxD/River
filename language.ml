@@ -39,36 +39,36 @@ type condition =
 type expression =
 	Assignment of string * literal;;
 
-type statement = 
-	  Expression of expression
-	| If of condition * statement * statement;;
-
 type statement_list = 
 	  StatementList of statement * statement_list
-	| Nothing;;
+	| Nothing
+and statement = 
+	  Expression of expression
+	| If of condition * statement_list * statement_list
+	| While of condition * statement_list;;
 
-let outputLiteral = function
+let getLiteral = function
 	  Int (n) 					-> "int(" ^ string_of_int n ^ ")"
 	| Float (n) 				-> "float(" ^ string_of_float n ^ ")"
 	| Bool (n) when n == true 	-> "bool(true)"
 	| Bool (n) when n == false 	-> "bool(false)"
 	| Char (n) 					-> "char(" ^ Char.escaped n ^ ")";;
 
-let outputCondition = function 
-	  Equality (l, r) -> "EqualityTest(" ^ outputLiteral l ^ ", " ^ outputLiteral r ^ ")";;
+let getCondition = function 
+	  Equality (l, r) -> "EqualityTest(" ^ getLiteral l ^ ", " ^ getLiteral r ^ ")";;
 
-let outputExpression = function
-	Assignment (i, v) -> "Assignment(" ^ i ^ ", " ^ outputLiteral v ^ ")";;
+let getExpression = function
+	Assignment (i, v) -> "Assign(" ^ i ^ ", " ^ getLiteral v ^ ")";;
 
-let rec outputStatement = function
-	  Expression (e) 	-> outputExpression e
+let rec getStatement = function
+	  Expression (e) 	-> getExpression e
+	| While (c, e)		-> "While(" ^ getCondition c ^ ", " ^ getStatementList e ^ ")"
 	| If (c, t, f) 		-> 
-		"If(" ^ outputCondition c ^ ", " ^ outputStatement t ^ 
-		", " ^ outputStatement f ^ ")";;
-
-let rec outputStatementList = function
-	  StatementList (s, r) 	-> outputStatement s ^ "\n" ^ outputStatementList r
-	| Nothing 				-> "\n";;
+		"If(" ^ getCondition c ^ ", " ^ getStatementList t ^ 
+		", " ^ getStatementList f ^ ")"
+and getStatementList = function
+	  StatementList (s, r) 	-> "[" ^ getStatement s ^ ", " ^ getStatementList r ^ "]"
+	| Nothing 				-> "";;
 
 
 

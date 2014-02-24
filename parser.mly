@@ -34,11 +34,12 @@ statement_list:
 ;
 	
 statement: 
-	  expr EOL { Expression $1 }
-	| IF condition THEN statement ELSE statement { If ($2, $4, $6) }
+	  expression EOL 										{ Expression $1 }
+	| IF condition THEN statement_list ELSE statement_list 	{ If ($2, $4, $6) }
+	| WHILE condition DO statement_list 					{ While ($2, $4) }
 ;
 
-expr:
+expression:
     IDENT ASSIGN literal { Assignment ($1, $3) }
 ;
 
