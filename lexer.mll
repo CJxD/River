@@ -15,7 +15,7 @@ rule token = parse
     | ['\n']                { EOL }
     | int                   { INT(int_of_string (Lexing.lexeme lexbuf)) }
     | float                 { FLOAT(float_of_string (Lexing.lexeme lexbuf)) }
-    | char                  { CHAR(char_of_string (Lexing.lexeme lexbuf)) }
+    | char                  { CHAR(String.get (Lexing.lexeme lexbuf) 0) }
     | bool                  { BOOL(bool_of_string (Lexing.lexeme lexbuf)) }
     | "true"                { TRUE }
     | "false"               { FALSE }

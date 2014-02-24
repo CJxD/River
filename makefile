@@ -11,11 +11,11 @@ GENDIR=gen
 
 # Source .ml files to include in the build
 
-SOURCES = $(wildcard *.ml) $(wildcard $(LIBDIR)/*.ml)
+SOURCES = $(wildcard *.ml) $(removeprefix $(LIBDIR)/, $(wildcard $(LIBDIR)/*.ml))
 
 # Compiler/Lexer/Parser commands
 
-CC=ocamlc -I $(OBJDIR)
+CC=ocamlc -I $(OBJDIR) -I $(LIBDIR)
 LEX=ocamllex
 YACC=ocamlyacc
 
@@ -29,9 +29,10 @@ all: river
 
 # Link the interpreter
 
-river: parser lexer $(OBJS) $(BINDIR)
+river: parser lexer $(BINDIR) $(OBJS)
 	@echo "-> Linking lexer, parser & objects"
 	$(CC) -o $(BINDIR)/$@ $(OBJDIR)/parser.cmo $(OBJDIR)/lexer.cmo $(OBJS)
+	chmod +x $(BINDIR)/$@
 	@echo "---> Done"
 
 # Compile Module Interface
@@ -54,7 +55,7 @@ $(OBJDIR)/%.cmo: %.ml $(OBJDIR)/%.cmi $(OBJDIR)
 
 # Generate & compile the parser
 
-parser: parser.mly $(GENDIR) $(OBJDIR)
+parser: parser.mly $(GENDIR) $(OBJDIR) $(OBJDIR)/language.cmo
 	@echo "-> Generating parser..."
 	$(YACC) -b$(GENDIR)/parser -v $<
 	@echo "-> Compiling parser..."

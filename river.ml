@@ -3,11 +3,11 @@ open Language
 
 let _ = 
 	try
-		let sourcefile = open_in Sys.argv.(0) in
-			let lexbuf = Lexing.from_channel stdin in  
-				let result = Sdlparser.main Sdllexer.main lexbuf in
+		let sourcefile = open_in Sys.argv.(1) in
+			let lexbuf = Lexing.from_channel sourcefile in  
+				let result = Parser.main Lexer.token lexbuf in
 
-					outputAst result; 
+					outputStatementList result; 
 					print_newline();
 					flush stdout
 

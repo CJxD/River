@@ -1,4 +1,5 @@
 
+(*
 type condition = 
 	  Equality of expression * expression
 	| NonEquality of expression * expression
@@ -24,6 +25,46 @@ type ast =
 	| Bool of bool
 	| Char of char;;
 
+*)
 
-let rec outputAst = function
-	If
+type literal = 
+	Int of int
+	| Float of float
+	| Bool of bool
+	| Char of char;;
+
+type expression =
+	Assignment of string * literal;;
+
+type statement = 
+	Statement of expression;;
+
+type statement_list = 
+	  StatementList of statement * statement_list
+	| Nothing;;
+
+let outputLiteral = function
+	Int (n) -> print_int n
+	| Float (n) -> print_float n
+	| Bool (n) when n == true -> print_string "true"
+	| Bool (n) when n == false -> print_string "false"
+	| Char (n) -> print_char n;;
+
+let outputExpression = function
+	Assignment (identifier, value) -> 
+		print_string identifier; 
+		print_string " = ";
+		outputLiteral value;;
+
+let outputStatement = function
+	Statement (expression) -> outputExpression expression;;
+
+let rec outputStatementList = function
+	  StatementList (statement, rest) -> 
+	  	outputStatement statement; 
+	  	outputStatementList rest
+	| Nothing -> print_newline;;
+
+
+
+	
