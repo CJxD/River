@@ -37,7 +37,8 @@ type expression =
 	Assignment of string * literal;;
 
 type statement = 
-	Statement of expression;;
+	  Statement of expression
+	| BlankLine;; (* for blank lines *)
 
 type statement_list = 
 	  StatementList of statement * statement_list
@@ -46,18 +47,20 @@ type statement_list =
 let outputLiteral = function
 	Int (n) -> print_int n
 	| Float (n) -> print_float n
-	| Bool (n) when n == true -> print_string "true"
-	| Bool (n) when n == false -> print_string "false"
+	| Bool (n) when n == true -> print_string "bool(true)"
+	| Bool (n) when n == false -> print_string "bool(false)"
 	| Char (n) -> print_char n;;
 
 let outputExpression = function
 	Assignment (identifier, value) -> 
 		print_string identifier; 
 		print_string " = ";
-		outputLiteral value;;
+		outputLiteral value;
+		print_newline();;
 
 let outputStatement = function
-	Statement (expression) -> outputExpression expression;;
+	  Statement (expression) -> outputExpression expression
+	| BlankLine -> ();;
 
 let rec outputStatementList = function
 	  StatementList (statement, rest) -> 

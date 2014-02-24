@@ -6,6 +6,10 @@ let _ =
 		try 
 			let lexbuf = Lexing.from_channel sourcefile in  
 			let ast = Parser.main Lexer.token lexbuf in
+				print_string "Parsed source file ";
+				print_string Sys.argv.(1);
+				print_newline();
+				print_newline();
 				outputStatementList ast; 
 				print_newline();
 				flush stdout

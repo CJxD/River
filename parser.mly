@@ -27,15 +27,18 @@ open Language
 main:
 	statement_list EOF { $1 }
 ;
-	
-statement: 
-	expr EOL { Statement $1 }
-;
 
 statement_list:
 	  statement 				{ StatementList ($1, Nothing) }
 	| statement_list statement 	{ StatementList ($2, $1) }
 ;
+	
+statement: 
+	  expr EOL { Statement $1 }
+	| expr EOF { Statement $1 }
+;
+
+
 
 expr:
     IDENT ASSIGN literal { Assignment ($1, $3) }
