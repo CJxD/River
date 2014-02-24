@@ -6,7 +6,7 @@ let _ =
 		let source = open_in Sys.argv.(1) in
 		let lexbuf = Lexing.from_channel source in  
 		let ast = Parser.main Lexer.token lexbuf in
-			outputStatementList ast; 
+			print_string (outputStatementList ast); 
 			flush stdout;
 	with 
 		| Invalid_argument e ->

@@ -34,13 +34,16 @@ statement_list:
 ;
 	
 statement: 
-	  expr EOL { Statement $1 }
+	  expr EOL { Expression $1 }
+	| IF condition THEN statement ELSE statement { If ($2, $4, $6) }
 ;
-
-
 
 expr:
     IDENT ASSIGN literal { Assignment ($1, $3) }
+;
+
+condition:
+	 literal EQ literal { Equality ($1, $3) }
 ;
 
 literal:

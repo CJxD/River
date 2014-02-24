@@ -4,6 +4,10 @@
 
 test = 2.6420663848363;
 
+if 3 == 4 then
+	conditional = 123;
+else 
+	conditional = 456;
    	
 
 kittens = true;
