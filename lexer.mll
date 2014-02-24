@@ -6,7 +6,7 @@ let white_space = [' ' '\t' '\n']
 let digit = ['0'-'9']
 let int = digit +
 let float = (int '.' int) | (int ['f' 'F'])
-let char = '''[^ '\n']'''
+let char = ''' [^ '\n'] '''
 let bool = "true" | "false"
 let alphanum = ['a'-'z' '0'-'9' '_']*
 
@@ -15,14 +15,14 @@ rule token = parse
     (* Lines & Whitespace *)
 
       white_space            { token lexbuf }
-    | ';'                    { EOL }
     | eof                    { EOF }
+    | ';'                    { EOL }
 
     (* Literals *)
 
     | int                    { INT(int_of_string (Lexing.lexeme lexbuf)) }
     | float                  { FLOAT(float_of_string (Lexing.lexeme lexbuf)) }
-    | char                   { CHAR(String.get (Lexing.lexeme lexbuf) 0) }
+    | char                   { CHAR(String.get (Lexing.lexeme lexbuf) 1) }
     | bool                   { BOOL(bool_of_string (Lexing.lexeme lexbuf)) }
     | "true"                 { TRUE }
     | "false"                { FALSE }

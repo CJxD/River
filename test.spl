@@ -7,3 +7,5 @@ test = 2.6420663848363;
    	
 
 kittens = true;
+
+test = '$';
