@@ -1,12 +1,11 @@
 {
     open Parser
-    exception Eof
 }
 
 let digit = ['0'-'9']
 let int = digit +
 let float = (int '.' int) | (int ['f' 'F'])
-let char = [^ '\n']
+let char = '''[^ '\n']'''
 let bool = "true" | "false"
 let alphanum = ['a'-'z' '0'-'9' '_']*
 
@@ -48,4 +47,4 @@ rule token = parse
     | "while"               { WHILE }
     | "do"                  { DO }
     | ['a'-'z'] alphanum*   { IDENT(Lexing.lexeme lexbuf) }
-    | eof                   { raise Eof }
+    | eof                   { EOF }

@@ -12,7 +12,7 @@ open Language
 %token PLUS MINUS TIMES DIV LPAREN RPAREN 
 %token POINTER LBRACKET RBRACKET ASSIGN ANGLELEFT ANGLERIGHT 
 %token XOR AND OR COMMA INCREMENT DECREMENT LAMBDA IF THEN ELSE WHILE DO 
-%token TRUE FALSE
+%token TRUE FALSE EOF
 %token EQ GTE LTE NEQ
 %token EOL
 %left PLUS MINUS		/* low precedence */
@@ -25,7 +25,7 @@ open Language
 %%
 
 main:
-	statement_list { $1 }
+	statement_list EOF { $1 }
 ;
 	
 statement: 
