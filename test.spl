@@ -10,12 +10,10 @@ if 3 == 4 then
 	if 2 == 9 then
 		var = 9.9;
 	else 
-		/* moar comment */
 		toes = 't';
 else 
 	while 1 == 1 do // this is horiffically syntax invalid £$%^&*
 		boolean = true;
-   	
 
 kittens = true;
 

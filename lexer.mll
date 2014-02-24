@@ -21,7 +21,8 @@ rule token = parse
 	(* Comments *)
 
 	| "//" [^ '\n']* 		{ token lexbuf }
-	| "/*" _* "*/" 			{ token lexbuf }
+	
+	(* | "/*" _* "*/" 			{ token lexbuf } *)
 
 	(* Literals *)
 
