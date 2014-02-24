@@ -35,7 +35,6 @@ statement_list:
 	
 statement: 
 	  expr EOL { Statement $1 }
-	| expr EOF { Statement $1 }
 ;
 
 
