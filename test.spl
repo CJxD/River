@@ -1,6 +1,6 @@
 
   	
-
+funcname(5);
 
 test = 2.6420663848363;
 
@@ -12,10 +12,10 @@ if 3 == 4 then
 	else 
 		toes = 't';
 else 
-	while 1 == 1 do // this is horiffically syntax invalid £$%^&*
+	while 1 == 1 do // inline comment
 		boolean = true;
+		kittens = true;
+		test = '$';
 
-kittens = true;
 
-test = '$';
 

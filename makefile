@@ -9,9 +9,9 @@ BINDIR=bin
 OBJDIR=obj
 GENDIR=gen
 
-# Source .ml files to include in the build
+# Source .ml files to include in the build (ORDER MATTERS)
 
-SOURCES = $(wildcard *.ml) $(removeprefix $(LIBDIR)/, $(wildcard $(LIBDIR)/*.ml))
+SOURCES = language.ml interpreter.ml river.ml
 
 # Compiler/Lexer/Parser commands
 

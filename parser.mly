@@ -30,7 +30,7 @@ main:
 
 statement_list:
 	  statement 				{ StatementList ($1, Nothing) }
-	| statement_list statement 	{ StatementList ($2, $1) }
+	| statement statement_list 	{ StatementList ($1, $2) }
 ;
 	
 statement: 
@@ -40,11 +40,21 @@ statement:
 ;
 
 expression:
-    IDENT ASSIGN literal { Assignment ($1, $3) }
+	  literal 							{ Literal $1 }
+	| IDENT 							{ VariableRead (Variable $1) }
+    | IDENT ASSIGN literal 				{ Assignment (Variable ($1), $3) }
+    | IDENT LPAREN expression RPAREN 	{ Application (Function ($1), $3) }
 ;
 
 condition:
-	 literal EQ literal { Equality ($1, $3) }
+	  expression EQ expression 			{ Equality ($1, $3) }
+	| expression NEQ expression 		{ NonEquality ($1, $3) }
+	| expression LBRACKET expression 	{ LessThan ($1, $3) }
+	| expression RBRACKET expression 	{ GreaterThan ($1, $3) }
+	| expression LTE expression 		{ LessThanOrEqual ($1, $3) }
+	| expression GTE expression 		{ GreaterThanOrEqual ($1, $3) }
+
+	 /* expression AND expression? / OR? */
 ;
 
 literal:
