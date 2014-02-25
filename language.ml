@@ -1,31 +1,5 @@
 
-(*
-type condition = 
-	  Equality of expression * expression
-	| NonEquality of expression * expression
-	| LessThan of expression * expression
-	| GreaterThan of expression * expression
-	| LessThanOrEqual of expression * expression
-	| GreaterThanOrEqual of expression * expression;;
-
-type operator =
-	  Addition
-	| Subtraction
-	| Division
-	| Multiplication;;
-
-type ast = 
-	  If of condition * expression * expression
-	| While of condition * expression
-	| Assignment of identifier * expression
-	| Arithmetic of operator * expression * expression
-	| Application of identifier * expression * expression 
-	| Int of int
-	| Float of float
-	| Bool of bool
-	| Char of char;;
-
-*)
+(* AST types *)
 
 type literal = 
 	  Int of int
@@ -64,6 +38,8 @@ and statement =
 	  Expression of expression
 	| If of condition * statement_list * statement_list
 	| While of condition * statement_list;;
+
+(* Print out the AST for debugging purposes *)
 
 let getLiteral = function
 	  Int (n) 		-> "int(" ^ string_of_int n ^ ")"
