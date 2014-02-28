@@ -1,8 +1,8 @@
 
 // Problem 2 - Stream Arithmetic 1
 
-using s1, s2
+using stream1, stream2
 
 loop
 	
-	out s1[0] - (2 * s2[0]);
+	out stream1[0] - (2 * stream2[0]);

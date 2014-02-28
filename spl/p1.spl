@@ -1,7 +1,7 @@
 
 // Problem 1 - Truncation
 
-using s1
+using stream
 
 begin
 
@@ -9,4 +9,4 @@ begin
 
 loop
 	
-	out s1[0];
+	out stream[0];
