@@ -77,9 +77,9 @@ let rec pow a b =
 		match b with
 		| 0 -> Int 1
 		| 1 -> Int a
-		| n -> 
-			let b = pow (Int a) (Int (n / 2)) in
-				mul (mul b b) (if n mod 2 = 0 then (Int 1) else (Int a)))
+		| b -> 
+			let n = pow (Int a) (Int (b / 2)) in
+				mul (mul n n) (if b mod 2 = 0 then (Int 1) else (Int a)))
 	| Int a, Float b -> Float (float_of_int a ** b)
 	| Float a, Int b -> Float (a ** float_of_int b)
 	| Float a, Float b -> Float (a ** b)
