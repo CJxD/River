@@ -71,10 +71,10 @@ let modulo a b =
 	| Float a, Float b -> Float (mod_float a b)
 	| _, _ -> raise (Failure "Fucking idiot.");;
 	
-let rec pow a n =
-	match a, n with
-	| Int a, Int n -> (
-		match n with
+let rec pow a b =
+	match a, b with
+	| Int a, Int b -> (
+		match b with
 		| 0 -> Int 1
 		| 1 -> Int a
 		| n -> 
