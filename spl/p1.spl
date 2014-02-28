@@ -1,0 +1,12 @@
+
+// Problem 1 - Truncation
+
+using s1
+
+begin
+
+	skip 2;
+
+loop
+	
+	out s1[0];
