@@ -7,18 +7,18 @@ let _ =
 		let sourcefile = Sys.argv.(1) in
 			try
 				let lexbuf = Lexing.from_channel (open_in sourcefile) in  
-				let ast = Parser.main Lexer.token lexbuf in
+				let program = Parser.main Lexer.token lexbuf in
 
 					if Array.length Sys.argv == 3 then
 						match Sys.argv.(2) with
-							| "printast" -> 
-								print_string (getStatementList ast);
+							| "-printast" -> 
+								print_string (getProgram program);
 								print_newline();
 								flush stdout
 							| _ -> 
 								raise (Invalid_argument ("Unrecognized debugging setting: " ^ Sys.argv.(2)))
 					else
-						Interpreter.run ast
+						Interpreter.run program
 			with 
 				| Invalid_argument e ->
 					print_endline ("Invalid argument: " ^ e)

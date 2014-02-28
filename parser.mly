@@ -11,7 +11,8 @@ open Language
 %token <string> IDENT
 %token PLUS MINUS TIMES DIV LPAREN RPAREN 
 %token POINTER LBRACKET RBRACKET ASSIGN ANGLELEFT ANGLERIGHT 
-%token XOR AND OR COMMA INCREMENT DECREMENT LAMBDA IF THEN ELSE WHILE DO 
+%token XOR AND OR COMMA INCREMENT DECREMENT IF THEN ELSE WHILE DO 
+%token USING BEGIN SKIP LOOP OUT IN 
 %token TRUE FALSE EOF
 %token EQ GTE LTE NEQ
 %token EOL
@@ -20,30 +21,38 @@ open Language
 %left EXPONENTIAL 
 %nonassoc UMINUS        /* high precedence */
 %start main
-%type <Language.statement_list> main
+%type <Language.program> main
 
 %%
 
 main:
-	statement_list EOF { $1 }
+	  USING identifier_list BEGIN statement_list LOOP statement_list EOF 	{ Program ($2, $4, $6) }
+	| USING identifier_list LOOP statement_list EOF 						{ Program ($2, EndStatement, $4) }
+;
+
+identifier_list:
+	  IDENT 						{ IdentifierList ($1, EndIdentifier) }
+	| IDENT COMMA identifier_list 	{ IdentifierList ($1, $3) }
 ;
 
 statement_list:
-	  statement 				{ StatementList ($1, Nothing) }
+	  statement 				{ StatementList ($1, EndStatement) }
 	| statement statement_list 	{ StatementList ($1, $2) }
 ;
-	
+
 statement: 
 	  expression EOL 										{ Expression $1 }
+	| SKIP EOL												{ Skip (1, "") }
+	| SKIP IN IDENT EOL 									{ Skip (1, $3) }
+	| SKIP INT EOL											{ Skip ($2, "") }  
+	| SKIP INT IN IDENT EOL 								{ Skip ($2, $4) }
+	| OUT expression EOL 									{ Output $2 }
 	| IF condition THEN statement_list ELSE statement_list 	{ If ($2, $4, $6) }
-	| WHILE condition DO statement_list 					{ While ($2, $4) }
 ;
 
 expression:
 	  literal 							{ Literal $1 }
-	| IDENT 							{ VariableRead (Variable $1) }
-    | IDENT ASSIGN literal 				{ Assignment (Variable ($1), $3) }
-    | IDENT LPAREN expression RPAREN 	{ Application (Function ($1), $3) }
+	| IDENT LBRACKET INT RBRACKET 		{ StreamAccess ($1, $3) }
 ;
 
 condition:
@@ -58,12 +67,8 @@ condition:
 ;
 
 literal:
-	  INT 		{ Int $1 }
-	| FLOAT 	{ Float $1 }
-	| CHAR 		{ Char $1 }
-	| BOOL 		{ Bool $1 }
+	  INT 	{ Int $1 }
+	| FLOAT { Float $1 }
+	| CHAR 	{ Char $1 }
+	| BOOL 	{ Bool $1 }
 ;
-
-
-
-

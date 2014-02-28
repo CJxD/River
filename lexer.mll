@@ -53,7 +53,6 @@ rule token = parse
 	| ',' 					{ COMMA } 
 	| "++" 					{ INCREMENT }
 	| "--" 					{ DECREMENT }
-	| "->" 					{ LAMBDA }
 	| "==" 					{ EQ }
 	| ">=" 					{ GTE }
 	| "<=" 					{ LTE }
@@ -64,8 +63,12 @@ rule token = parse
 	| "if" 					{ IF }
 	| "then" 				{ THEN }
 	| "else" 				{ ELSE }
-	| "while" 				{ WHILE }
-	| "do" 					{ DO }
+	| "using"				{ USING }
+	| "begin"				{ BEGIN }
+	| "skip"                { SKIP }
+	| "loop" 				{ LOOP }
+	| "out" 				{ OUT }
+	| "in"					{ IN }
 
 	(* Identifiers *)
 
