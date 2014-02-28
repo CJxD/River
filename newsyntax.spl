@@ -1,6 +1,0 @@
-
-using s1, s2
-
-loop
-	out s1[0];
-	out s2[0];

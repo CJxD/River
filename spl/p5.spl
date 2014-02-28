@@ -6,5 +6,5 @@ using stream
 loop
 	
 	out stream[0];
-	next;
+	
 	skip;

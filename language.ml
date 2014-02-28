@@ -61,7 +61,7 @@ let getCondition = function
 
 let rec getStatement = function
 	  Expression (e) 	-> getExpression e
-	| Skip (i, s) 		-> "Skip(" ^ string_of_int i ^ ", '" ^ getIdentifier s ^ "')"
+	| Skip (i, s) 		-> "Skip(" ^ string_of_int i ^ ", " ^ getIdentifier s ^ ")"
 	| Output (e) 		-> "Output(" ^ getExpression e ^ ")"
 	| If (c, t, f) 		-> "If(" ^ getCondition c ^ ", " ^ getStatementList t ^ ", " ^ getStatementList f ^ ")"
 and getStatementList = function
