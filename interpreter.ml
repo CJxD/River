@@ -9,7 +9,7 @@ let rec run_expression = function
 	| Minus (l, r) 					-> run_minus (run_expression l) (run_expression r)
 	| Times (l, r) 					-> run_times (run_expression l) (run_expression r)
 	| Divide (l, r) 				-> run_divide (run_expression l) (run_expression r)
-	| Group (e) 					-> run_expression e
+	| Group (e) 					-> "(" ^ run_expression e ^ ")"
 	| StreamAccess (stream, index) 	-> "Accessing element " ^ string_of_int index ^ " of stream " ^ stream;;
 
 let run_skip elements stream =

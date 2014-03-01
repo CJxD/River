@@ -3,13 +3,13 @@ open Language
 
 (* Print out a stream list list (strings) *)
 
-let rec printStringList = function
-	| (str :: rest) -> print_string (str ^ " "); printStringList rest
+let rec printIntList = function
+	| (i :: rest) -> print_string ((string_of_int i) ^ " "); printIntList rest
 	| [] -> print_endline "";;
 
 let rec printInput = function
 	| (value :: rest) -> 
-		printStringList value;
+		printIntList value;
 		printInput rest
 	| [] -> ();; 
 
