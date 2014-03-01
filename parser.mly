@@ -9,7 +9,7 @@ open Language
 %token <bool> BOOL 
 %token <char> CHAR
 %token <string> IDENT
-%token PLUS MINUS TIMES DIV LPAREN RPAREN 
+%token PLUS MINUS TIMES DIVIDE LPAREN RPAREN 
 %token POINTER LBRACKET RBRACKET ASSIGN ANGLELEFT ANGLERIGHT 
 %token XOR AND OR COMMA INCREMENT DECREMENT IF THEN ELSE WHILE DO 
 %token USING BEGIN SKIP LOOP OUT IN
@@ -17,7 +17,7 @@ open Language
 %token EQ GTE LTE NEQ
 %token EOL
 %left PLUS MINUS		/* low precedence */
-%left TIMES DIV MODULO  
+%left TIMES DIVIDE MODULO  
 %left EXPONENTIAL 
 %nonassoc UMINUS        /* high precedence */
 %start main
@@ -52,6 +52,10 @@ statement:
 
 expression:
 	  literal 							{ Literal $1 }
+	| expression PLUS expression 		{ Plus ($1, $3)  }
+	| expression MINUS expression 		{ Minus ($1, $3) }
+	| expression TIMES expression 		{ Times ($1, $3) }
+	| expression DIVIDE expression 		{ Divide ($1, $3) }
 	| IDENT LBRACKET INT RBRACKET 		{ StreamAccess ($1, $3) }
 ;
 

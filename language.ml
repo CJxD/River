@@ -13,7 +13,11 @@ type identifier_list =
 
 type expression =
  	  Literal 		of literal
- 	| StreamAccess 	of string * int;;
+ 	| StreamAccess 	of string * int
+ 	| Plus 			of expression * expression
+ 	| Minus 		of expression * expression
+ 	| Divide 		of expression * expression
+ 	| Times 		of expression * expression;;
 
 type condition = 
 	  Equality 				of expression * expression

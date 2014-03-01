@@ -34,4 +34,4 @@ let run = function
 	| Program (using, start, loop) -> 
 		define_streams using;
 		run_statement_list start;
-		run_statement_list loop;
+		run_statement_list loop;;

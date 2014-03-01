@@ -11,7 +11,11 @@ GENDIR=gen
 
 # Source .ml files to include in the build (ORDER MATTERS)
 
-SOURCES = language.ml interpreter.ml river.ml
+SOURCES= language.ml interpreter.ml input.ml river.ml
+
+# OCaml precompiled libraries to include during linking
+
+LIBRARIES= str.cma
 
 # Compiler/Lexer/Parser commands
 
@@ -21,7 +25,7 @@ YACC=ocamlyacc
 
 # Change .ml to .cmo in the sources list & add the object dir
 
-OBJS = $(addprefix $(OBJDIR)/, $(SOURCES:.ml=.cmo))
+OBJS= $(addprefix $(OBJDIR)/, $(SOURCES:.ml=.cmo))
 
 # Execute a full river build
 
@@ -31,7 +35,7 @@ all: river
 
 river: parser lexer $(BINDIR) $(OBJS)
 	@echo "-> Linking lexer, parser & objects"
-	$(CC) -o $(BINDIR)/$@ $(OBJDIR)/parser.cmo $(OBJDIR)/lexer.cmo $(OBJS)
+	$(CC) -o $(BINDIR)/$@ $(OBJDIR)/parser.cmo $(OBJDIR)/lexer.cmo $(LIBRARIES) $(OBJS)
 	chmod +x $(BINDIR)/$@
 	@echo "---> Done"
 

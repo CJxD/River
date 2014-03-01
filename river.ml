@@ -1,6 +1,7 @@
 
 open Language 
 open Interpreter
+open Input
 
 let _ = 
 	try
@@ -15,6 +16,8 @@ let _ =
 								print_string (getProgram program);
 								print_newline();
 								flush stdout
+							| "-input" ->
+								Input.checkInput (Input.parse stdin)
 							| _ -> 
 								raise (Invalid_argument ("Unrecognized debugging setting: " ^ Sys.argv.(2)))
 					else
@@ -26,6 +29,9 @@ let _ =
 					print_endline ("Could not read source file: " ^ e)
 				| Parsing.Parse_error -> 
 					print_endline "Source file could not be parsed (Syntax Error)."
+				| Input.Input_format_error e ->
+					print_endline ("Input format error: " ^ e)
+
 	with
 		Invalid_argument e -> 
 			print_endline "No input file specified.\nUsage: river <source file> <printast>"
