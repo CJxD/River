@@ -2,6 +2,7 @@
 open Language 
 open Interpreter
 open Input
+open Debug
 
 let _ = 
 	try
@@ -17,7 +18,7 @@ let _ =
 								print_newline();
 								flush stdout
 							| "-input" ->
-								Input.checkInput (Input.parse stdin)
+								Debug.printInput (Input.parse stdin)
 							| _ -> 
 								raise (Invalid_argument ("Unrecognized debugging setting: " ^ Sys.argv.(2)))
 					else

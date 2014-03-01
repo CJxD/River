@@ -11,7 +11,7 @@ GENDIR=gen
 
 # Source .ml files to include in the build (ORDER MATTERS)
 
-SOURCES= language.ml interpreter.ml input.ml river.ml
+SOURCES= language.ml math.ml input.ml debug.ml interpreter.ml river.ml
 
 # OCaml precompiled libraries to include during linking
 
@@ -49,6 +49,12 @@ $(OBJDIR)/%.cmi: %.mli $(OBJDIR)
 
 $(OBJDIR)/%.cmo: %.ml $(OBJDIR)
 	@echo "-> Compiling module: $<"
+	$(CC) -o $@ -c $<
+
+# Compile library module
+
+$(OBJDIR)/%.cmo: $(LIBDIR)/%.ml $(OBJDIR)
+	@echo "-> Compiling library module: $<"
 	$(CC) -o $@ -c $<
 	
 # Compile Module (Attempt to build its Interface first, dont think this will work)

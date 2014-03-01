@@ -52,6 +52,7 @@ statement:
 
 expression:
 	  literal 							{ Literal $1 }
+	| LPAREN expression RPAREN			{ Group $2 }
 	| expression PLUS expression 		{ Plus ($1, $3)  }
 	| expression MINUS expression 		{ Minus ($1, $3) }
 	| expression TIMES expression 		{ Times ($1, $3) }
