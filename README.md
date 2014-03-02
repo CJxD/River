@@ -4,14 +4,14 @@ River
 A stream-based programming language
 
 
-# Useful OCaml Stuff
+### Useful OCaml Stuff
 
 Enables stack traces on exceptions (provided -g is set on ocamlc in the makefile)
 
     export OCAMLRUNPARAM=b
 
 
-# Running Problem Files
+### Running Problem Files
 
     bin/river spl/p1.spl < spl/p1.input
 
@@ -24,7 +24,7 @@ Or run all problem files with
     ./run all
 
 
-# Debugging Features
+### Debugging Features
 
     bin/river spl/p1.spl -printast
 
