@@ -20,11 +20,17 @@ let parse channel =
 			 		let split = Str.split (Str.regexp " ") trimmed in
 			 		let stream = List.map int_of_string split in
 
-			 			if List.length stream == stream_length then
-			 				streams := stream :: !streams
+			 			if List.length stream == stream_length then 
+			 				begin
 
-							(* if stream list is now declared size raise end_of_file *)
+			 					streams := stream :: !streams;
 
+								(* if stream list is now declared size raise end_of_file *)
+
+								if List.length !streams == num_streams then
+			 						raise End_of_file
+			 						
+							end
 			 			else
 			 				raise (
 			 					Input_format_error (
