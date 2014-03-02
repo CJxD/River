@@ -8,8 +8,8 @@ let parse channel =
 
 		(* Read the number & length declarations first *)
 
-		let num_streams = int_of_string (input_line channel) in
-		let stream_length = int_of_string (input_line channel) in	
+		let num_streams = int_of_string (String.trim (input_line channel)) in
+		let stream_length = int_of_string (String.trim (input_line channel)) in	
 		let streams = ref [] in
 			try
 			 	while true do 
