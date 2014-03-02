@@ -24,7 +24,8 @@ type expression =
  	| Divide 		of expression * expression
  	| Times 		of expression * expression
  	| Modulo 		of expression * expression
- 	| Power 		of expression * expression;;
+ 	| Power 		of expression * expression
+ 	| UnaryMinus 	of expression;;
 
 type condition = 
 	  Equality 				of expression * expression

@@ -33,7 +33,7 @@ rule token = parse
 	| "true" 				{ TRUE }
 	| "false" 				{ FALSE }
 
-	(* Operators *)
+	(* Math Operators *)
 
 	| '+' 					{ PLUS }
 	| '-' 					{ MINUS }
@@ -42,37 +42,50 @@ rule token = parse
 	| '%' 					{ MODULO }
 	| "**" 					{ POWER }
 
+	(* Expression Grouping *)
+
 	| '(' 					{ LPAREN }
 	| ')' 					{ RPAREN }
-	| ':' 					{ POINTER }
+
+	(* Stream Access *)
+	
 	| '[' 					{ LBRACKET }
 	| ']' 					{ RBRACKET }
+
+	(* Conditionals *)
+
+	| "==" 					{ EQ }
+	| "!=" 					{ NEQ }
+	| "<=" 					{ LTE }
+	| ">=" 					{ GTE }
+	| '<' 					{ LT }
+	| '>' 					{ GT }
+
+	(* Control Structures *)
+
+	| "if" 					{ IF }
+	| "then" 				{ THEN }
+	| "else" 				{ ELSE }
+
+	(* Keywords *)
+
+	| "with"				{ USING }
+	| "begin"				{ BEGIN }
+	| "loop" 				{ LOOP }
+	| "skip"                { SKIP }
+	| "in"					{ IN }
+	| "out" 				{ OUT }
+	
+	(* Identifiers *)
+
+	| ['a'-'z'] alphanum* 	{ IDENT(Lexing.lexeme lexbuf) }
+
+	(* Unused *)
+
 	| '=' 					{ ASSIGN }
-	| '>' 					{ ANGLERIGHT }
-	| '<' 					{ ANGLELEFT }
 	| '^' 					{ XOR }
 	| '&' 					{ AND }
 	| '|' 					{ OR }
 	| ',' 					{ COMMA } 
 	| "++" 					{ INCREMENT }
 	| "--" 					{ DECREMENT }
-	| "==" 					{ EQ }
-	| ">=" 					{ GTE }
-	| "<=" 					{ LTE }
-	| "!=" 					{ NEQ }
-
-	(* Keywords *)
-
-	| "if" 					{ IF }
-	| "then" 				{ THEN }
-	| "else" 				{ ELSE }
-	| "with"				{ USING }
-	| "begin"				{ BEGIN }
-	| "skip"                { SKIP }
-	| "loop" 				{ LOOP }
-	| "out" 				{ OUT }
-	| "in"					{ IN }
-
-	(* Identifiers *)
-
-	| ['a'-'z'] alphanum* 	{ IDENT(Lexing.lexeme lexbuf) }

@@ -39,7 +39,8 @@ and getMath = function
 	| Times (l, r) 			-> "Times(" ^ getExpression l ^ ", " ^ getExpression r ^ ")"
 	| Divide (l, r) 		-> "Divide(" ^ getExpression l ^ ", " ^ getExpression r ^ ")"
 	| Modulo (l, r) 		-> "Modulo(" ^ getExpression l ^ ", " ^ getExpression r ^ ")"
-	| Power (l, r) 			-> "Power(" ^ getExpression l ^ ", " ^ getExpression r ^ ")";;
+	| Power (l, r) 			-> "Power(" ^ getExpression l ^ ", " ^ getExpression r ^ ")"
+	| UnaryMinus (e) 		-> "Negative(" ^ getExpression e ^ ")";;
 
 
 let getCondition = function 

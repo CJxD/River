@@ -9,17 +9,24 @@ open Language
 %token <bool> BOOL 
 %token <char> CHAR
 %token <string> IDENT
-%token PLUS MINUS TIMES DIVIDE LPAREN RPAREN 
-%token POINTER LBRACKET RBRACKET ASSIGN ANGLELEFT ANGLERIGHT 
-%token XOR AND OR COMMA INCREMENT DECREMENT IF THEN ELSE WHILE DO 
-%token USING BEGIN SKIP LOOP OUT IN
-%token TRUE FALSE EOF MODULO POWER
-%token EQ GTE LTE NEQ
-%token EOL
-%left PLUS MINUS
-%left TIMES DIVIDE MODULO POWER
-%left EXPONENTIAL 
+
+%token EOF EOL
+%token TRUE FALSE
+%token PLUS MINUS TIMES DIVIDE MODULO POWER
+%token LPAREN RPAREN
+%token LBRACKET RBRACKET
+%token EQ NEQ LTE GTE LT GT
+%token IF THEN ELSE
+%token USING BEGIN LOOP SKIP IN OUT
+
+%token ASSIGN XOR AND OR COMMA INCREMENT DECREMENT
+
+%left EQ NEQ
+%left GT GTE LT LTE
+%left PLUS MINUS 
+%left TIMES DIVIDE MODULO
 %nonassoc UMINUS
+
 %start main
 %type <Language.program> main
 
@@ -51,28 +58,29 @@ statement:
 ;
 
 expression:
-	  literal 							{ Literal $1 }
-	| math 								{ Math $1  }
-	| LPAREN expression RPAREN			{ Group $2 }
-	| IDENT LBRACKET INT RBRACKET 		{ StreamAccess ($1, $3) }
+	  literal 						{ Literal $1 }
+	| math 							{ Math $1  }
+	| LPAREN expression RPAREN		{ Group $2 }
+	| IDENT LBRACKET INT RBRACKET 	{ StreamAccess ($1, $3) }
 ;
 
 math:
-	  expression PLUS expression 		{ Plus ($1, $3)  }
-	| expression MINUS expression 		{ Minus ($1, $3) }
-	| expression TIMES expression 		{ Times ($1, $3) }
-	| expression DIVIDE expression 		{ Divide ($1, $3) } 
-	| expression MODULO expression 		{ Modulo ($1, $3) } 
-	| expression POWER expression 		{ Power ($1, $3) }
+	  expression PLUS expression 	{ Plus ($1, $3)  }
+	| expression MINUS expression 	{ Minus ($1, $3) }
+	| expression TIMES expression 	{ Times ($1, $3) }
+	| expression DIVIDE expression 	{ Divide ($1, $3) } 
+	| expression MODULO expression 	{ Modulo ($1, $3) } 
+	| expression POWER expression 	{ Power ($1, $3) }
+	| MINUS expression %prec UMINUS { UnaryMinus $2 }
 ;
 
 condition:
-	  expression EQ expression 			{ Equality ($1, $3) }
-	| expression NEQ expression 		{ NonEquality ($1, $3) }
-	| expression LBRACKET expression 	{ LessThan ($1, $3) }
-	| expression RBRACKET expression 	{ GreaterThan ($1, $3) }
-	| expression LTE expression 		{ LessThanOrEqual ($1, $3) }
-	| expression GTE expression 		{ GreaterThanOrEqual ($1, $3) }
+	  expression EQ expression 	{ Equality ($1, $3) }
+	| expression NEQ expression { NonEquality ($1, $3) }
+	| expression LT expression 	{ LessThan ($1, $3) }
+	| expression GT expression 	{ GreaterThan ($1, $3) }
+	| expression LTE expression { LessThanOrEqual ($1, $3) }
+	| expression GTE expression { GreaterThanOrEqual ($1, $3) }
 
 	 /* expression AND expression? / OR? */
 ;

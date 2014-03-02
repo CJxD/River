@@ -24,4 +24,7 @@ class math =
 				let b = this#power y (n / 2) in
 					b * b * (if n mod 2 = 0 then 1 else y)
 
+		method unary_minus x = 
+			-x
+
 	end;;

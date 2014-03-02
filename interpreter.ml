@@ -130,11 +130,12 @@ class interpreter =
 		method run_math operation = 
 			let math = new math in 
 				match operation with 
-					| Plus (l, r) 	-> math#plus 	(this#evaluate_expression l) (this#evaluate_expression r)
-					| Minus (l, r) 	-> math#minus 	(this#evaluate_expression l) (this#evaluate_expression r)
-					| Times (l, r) 	-> math#times 	(this#evaluate_expression l) (this#evaluate_expression r)
-					| Divide (l, r) -> math#divide 	(this#evaluate_expression l) (this#evaluate_expression r)
-					| Modulo (l, r) -> math#modulo 	(this#evaluate_expression l) (this#evaluate_expression r)
-					| Power (l, r) 	-> math#power 	(this#evaluate_expression l) (this#evaluate_expression r)
+					| Plus (l, r) 		-> math#plus 		(this#evaluate_expression l) (this#evaluate_expression r)
+					| Minus (l, r) 		-> math#minus 		(this#evaluate_expression l) (this#evaluate_expression r)
+					| Times (l, r) 		-> math#times 		(this#evaluate_expression l) (this#evaluate_expression r)
+					| Divide (l, r) 	-> math#divide 		(this#evaluate_expression l) (this#evaluate_expression r)
+					| Modulo (l, r) 	-> math#modulo 		(this#evaluate_expression l) (this#evaluate_expression r)
+					| Power (l, r) 		-> math#power 		(this#evaluate_expression l) (this#evaluate_expression r)
+					| UnaryMinus (e) 	-> math#unary_minus (this#evaluate_expression e)
 
 	end;;
