@@ -1,0 +1,13 @@
+
+using stream1, stream2
+
+loop
+	
+	if stream1[0] == stream2[0] then
+
+		out 1;
+
+	else
+
+		out 0;
+

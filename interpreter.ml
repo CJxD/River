@@ -117,6 +117,18 @@ class interpreter =
 			| Expression (expression) 	-> this#evaluate_expression expression; ()
 			| Skip (elements, stream) 	-> this#skip elements stream
 			| Output (expression) 		-> this#output (this#evaluate_expression expression)
-			| If (_, _, _) 				-> ()
+			| If (condition, true_list, false_list) ->
+				if this#evaluate_condition condition then
+					this#run_statement_list true_list
+				else
+					this#run_statement_list false_list
+
+		method evaluate_condition = function
+			| Equality (l, r) -> this#evaluate_expression l == this#evaluate_expression r
+			| NonEquality (l, r) -> this#evaluate_expression l != this#evaluate_expression r
+			| LessThan (l, r) -> this#evaluate_expression l < this#evaluate_expression r
+			| GreaterThan (l, r) -> this#evaluate_expression l > this#evaluate_expression r
+			| LessThanOrEqual (l, r) -> this#evaluate_expression l <= this#evaluate_expression r
+			| GreaterThanOrEqual (l, r) -> this#evaluate_expression l >= this#evaluate_expression r
 
 	end;;

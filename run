@@ -15,7 +15,15 @@ then
 	done
 
 else
+
+	if [[ $1 != *[!0-9]* ]]; then
+
+    	bin/river spl/p$1.spl $2 < spl/p$1.input
 	
-	bin/river spl/p$1.spl $2 < spl/p$1.input
+	else
+    
+		bin/river spl/$1.spl $2 < spl/$1.input
+
+	fi
 
 fi
