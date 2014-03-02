@@ -1,6 +1,7 @@
 
 open Language
 open Math
+open Comparison
 open Debug
 	
 class interpreter =
@@ -123,12 +124,14 @@ class interpreter =
 				else
 					this#run_statement_list false_list
 
-		method evaluate_condition = function
-			| Equality (l, r) -> this#evaluate_expression l == this#evaluate_expression r
-			| NonEquality (l, r) -> this#evaluate_expression l != this#evaluate_expression r
-			| LessThan (l, r) -> this#evaluate_expression l < this#evaluate_expression r
-			| GreaterThan (l, r) -> this#evaluate_expression l > this#evaluate_expression r
-			| LessThanOrEqual (l, r) -> this#evaluate_expression l <= this#evaluate_expression r
-			| GreaterThanOrEqual (l, r) -> this#evaluate_expression l >= this#evaluate_expression r
+		method evaluate_condition condition =
+			let comparator = new comparison in
+				match condition with
+					| Equality (l, r)			-> comparator#int_equal 				(this#evaluate_expression l) (this#evaluate_expression r)
+					| NonEquality (l, r) 		-> comparator#int_not_equal 			(this#evaluate_expression l) (this#evaluate_expression r)
+					| LessThan (l, r) 			-> comparator#int_less_than 			(this#evaluate_expression l) (this#evaluate_expression r)
+					| GreaterThan (l, r) 		-> comparator#int_greater_than 			(this#evaluate_expression l) (this#evaluate_expression r)
+					| LessThanOrEqual (l, r) 	-> comparator#int_less_than_or_equal 	(this#evaluate_expression l) (this#evaluate_expression r)
+					| GreaterThanOrEqual (l, r) -> comparator#int_greater_than_or_equal (this#evaluate_expression l) (this#evaluate_expression r)
 
 	end;;

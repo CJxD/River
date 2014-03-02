@@ -11,7 +11,7 @@ GENDIR=gen
 
 # Source .ml files to include in the build (ORDER MATTERS)
 
-SOURCES= language.ml math.ml input.ml debug.ml interpreter.ml river.ml
+SOURCES= language.ml math.ml comparison.ml input.ml debug.ml interpreter.ml river.ml
 
 # OCaml precompiled libraries to include during linking
 
