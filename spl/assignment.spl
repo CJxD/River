@@ -1,0 +1,8 @@
+
+with stream
+
+loop
+	
+	testvar = -stream[0];
+
+	out testvar;

@@ -5,12 +5,12 @@ TESTS=5
 if [ $1 = "all" ]
 then
 	
-	for i in $(seq 1 $TESTS);
+	for i in `echo spl/*.spl`;
 	do
 		
-		echo "Running problem $i"
+		echo "Running test: $i"
 
-		bin/river spl/p$i.spl $2 < spl/p$i.input
+		bin/river $i $2 < ${i%.*}.input
 
 	done
 

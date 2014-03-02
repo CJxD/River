@@ -2,6 +2,7 @@
 exception Fatal of string;;
 exception Warning of string;;
 exception End_of_stream;;
+exception Undeclared_identifier of string;;
 
 type literal = 
 	  Int 	of int
@@ -15,9 +16,11 @@ type identifier_list =
 
 type expression =
  	  Literal 		of literal
+ 	| Identifier 	of string 
  	| StreamAccess 	of string * int
  	| Math 			of math
  	| Group 		of expression
+ 	| Assignment 	of string * expression
  and math = 
 	  Plus 			of expression * expression
  	| Minus 		of expression * expression

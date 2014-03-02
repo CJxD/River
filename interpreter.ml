@@ -3,21 +3,20 @@ open Language
 open Math
 open Comparison
 open Debug
-	
+
 class interpreter =
 	object (this)
 
 		val mutable streams = ([] : (string * int list) list)
 		val mutable output = ([] : int list)
+		val mutable bindings = ([] : (string * literal) list)
 
 		method get_stream identifier = 
 			try
 				List.assoc identifier streams
 			with
 				Not_found -> 
-					print_endline "ENTERED ERROR CONDITION:";
-					Debug.debugAssocList streams;
-					raise (Fatal ("Use of undeclared identifier: " ^ identifier))
+					raise (Undeclared_identifier identifier)
 
 		method get_default_stream = 
 			if List.length streams == 1 then
@@ -90,23 +89,43 @@ class interpreter =
 		method output value =
 			output <- value :: output
 
+		method update_binding identifier value = 
+			bindings <- (identifier, value) :: List.remove_assoc identifier bindings
+
+		method read_binding identifier =
+			try
+				List.assoc identifier bindings
+			with
+				Not_found -> 
+					raise (Undeclared_identifier identifier)
+
 		method evaluate_expression expression = 
 			match expression with
 				| Literal (literal) -> 
 					(match literal with 
 						| Int n -> n
 						| _ -> raise (Fatal "Invalid use of non-int literal in expression"))
+				| Identifier (identifier) ->
+					let value = this#read_binding identifier in
+						begin
+							match value with 
+								| Int (v) -> v
+								| _ -> raise (Fatal ("youve somehow stored a binding that isnt an int"))
+						end
 				| Math (operation) ->
 					this#run_math operation
 				| Group (expression) -> 
 					this#evaluate_expression expression
+				| Assignment (identifier, expression) ->
+					let value = this#evaluate_expression expression in
+						this#update_binding identifier (Int value);
+						value
 				| StreamAccess (stream, index) -> 
 					try
 						List.nth (this#get_stream stream) index 	
 					with
 						| Failure e -> raise End_of_stream
 						
-
 		method run_statement = function
 			| Expression (expression) 	-> this#evaluate_expression expression; ()
 			| Skip (elements, stream) 	-> this#skip elements stream

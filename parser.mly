@@ -18,9 +18,11 @@ open Language
 %token EQ NEQ LTE GTE LT GT
 %token IF THEN ELSE
 %token USING BEGIN LOOP SKIP IN OUT
+%token ASSIGN
 
-%token ASSIGN XOR AND OR COMMA INCREMENT DECREMENT
+%token XOR AND OR COMMA INCREMENT DECREMENT
 
+%right ASSIGN
 %left EQ NEQ
 %left GT GTE LT LTE
 %left PLUS MINUS 
@@ -59,6 +61,8 @@ statement:
 
 expression:
 	  literal 						{ Literal $1 }
+	| IDENT ASSIGN expression 		{ Assignment ($1, $3) }
+	| IDENT 						{ Identifier $1 }
 	| math 							{ Math $1  }
 	| LPAREN expression RPAREN		{ Group $2 }
 	| IDENT LBRACKET INT RBRACKET 	{ StreamAccess ($1, $3) }

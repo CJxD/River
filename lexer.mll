@@ -80,9 +80,12 @@ rule token = parse
 
 	| ['a'-'z'] alphanum* 	{ IDENT(Lexing.lexeme lexbuf) }
 
-	(* Unused *)
+	(* Assignment *)
 
 	| '=' 					{ ASSIGN }
+
+	(* Unused *)
+
 	| '^' 					{ XOR }
 	| '&' 					{ AND }
 	| '|' 					{ OR }
