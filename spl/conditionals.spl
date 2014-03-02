@@ -1,5 +1,5 @@
 
-using stream1, stream2
+with stream1, stream2
 
 loop
 	

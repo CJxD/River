@@ -1,7 +1,7 @@
 
 // Problem 2 - Stream Arithmetic 1
 
-using stream1, stream2
+with stream1, stream2
 
 loop
 	

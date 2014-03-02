@@ -13,11 +13,11 @@ open Language
 %token POINTER LBRACKET RBRACKET ASSIGN ANGLELEFT ANGLERIGHT 
 %token XOR AND OR COMMA INCREMENT DECREMENT IF THEN ELSE WHILE DO 
 %token USING BEGIN SKIP LOOP OUT IN
-%token TRUE FALSE EOF
+%token TRUE FALSE EOF MODULO POWER
 %token EQ GTE LTE NEQ
 %token EOL
 %left PLUS MINUS
-%left TIMES DIVIDE MODULO  
+%left TIMES DIVIDE MODULO POWER
 %left EXPONENTIAL 
 %nonassoc UMINUS
 %start main
@@ -52,12 +52,18 @@ statement:
 
 expression:
 	  literal 							{ Literal $1 }
+	| math 								{ Math $1  }
 	| LPAREN expression RPAREN			{ Group $2 }
-	| expression PLUS expression 		{ Plus ($1, $3)  }
+	| IDENT LBRACKET INT RBRACKET 		{ StreamAccess ($1, $3) }
+;
+
+math:
+	  expression PLUS expression 		{ Plus ($1, $3)  }
 	| expression MINUS expression 		{ Minus ($1, $3) }
 	| expression TIMES expression 		{ Times ($1, $3) }
-	| expression DIVIDE expression 		{ Divide ($1, $3) }
-	| IDENT LBRACKET INT RBRACKET 		{ StreamAccess ($1, $3) }
+	| expression DIVIDE expression 		{ Divide ($1, $3) } 
+	| expression MODULO expression 		{ Modulo ($1, $3) } 
+	| expression POWER expression 		{ Power ($1, $3) }
 ;
 
 condition:

@@ -39,6 +39,9 @@ rule token = parse
 	| '-' 					{ MINUS }
 	| '*' 					{ TIMES }
 	| '/' 					{ DIVIDE }
+	| '%' 					{ MODULO }
+	| "**" 					{ POWER }
+
 	| '(' 					{ LPAREN }
 	| ')' 					{ RPAREN }
 	| ':' 					{ POINTER }
@@ -63,7 +66,7 @@ rule token = parse
 	| "if" 					{ IF }
 	| "then" 				{ THEN }
 	| "else" 				{ ELSE }
-	| "using"				{ USING }
+	| "with"				{ USING }
 	| "begin"				{ BEGIN }
 	| "skip"                { SKIP }
 	| "loop" 				{ LOOP }

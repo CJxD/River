@@ -64,7 +64,7 @@ class interpreter =
 						this#define_streams rest stream_list
 					| EndIdentifier -> ()
 			with
-				| Failure e -> raise (Fatal "using decleration count does not match the input stream count")
+				| Failure e -> raise (Fatal "'with' decleration does not match the number of input streams")
 
 		method run_statement_list = function
 			| StatementList (statement, rest) -> 
@@ -91,27 +91,20 @@ class interpreter =
 			output <- value :: output
 
 		method evaluate_expression expression = 
-			let math = new math in 
-				match expression with
-					| Literal (literal) -> 
-						(match literal with 
-							| Int n -> n
-							| _ -> raise (Fatal "Invalid use of non-int literal in expression"))
-					| Plus (l, r) -> 
-						math#plus (this#evaluate_expression l) (this#evaluate_expression r)
-					| Minus (l, r) -> 
-						math#minus (this#evaluate_expression l) (this#evaluate_expression r)
-					| Times (l, r) -> 
-						math#times (this#evaluate_expression l) (this#evaluate_expression r)
-					| Divide (l, r) -> 
-						math#divide (this#evaluate_expression l) (this#evaluate_expression r)
-					| Group (e) -> 
-						this#evaluate_expression e
-					| StreamAccess (stream, index) -> 
-						try
-							List.nth (this#get_stream stream) index 	
-						with
-							| Failure e -> raise End_of_stream
+			match expression with
+				| Literal (literal) -> 
+					(match literal with 
+						| Int n -> n
+						| _ -> raise (Fatal "Invalid use of non-int literal in expression"))
+				| Math (operation) ->
+					this#run_math operation
+				| Group (expression) -> 
+					this#evaluate_expression expression
+				| StreamAccess (stream, index) -> 
+					try
+						List.nth (this#get_stream stream) index 	
+					with
+						| Failure e -> raise End_of_stream
 						
 
 		method run_statement = function
@@ -133,5 +126,15 @@ class interpreter =
 					| GreaterThan (l, r) 		-> comparator#int_greater_than 			(this#evaluate_expression l) (this#evaluate_expression r)
 					| LessThanOrEqual (l, r) 	-> comparator#int_less_than_or_equal 	(this#evaluate_expression l) (this#evaluate_expression r)
 					| GreaterThanOrEqual (l, r) -> comparator#int_greater_than_or_equal (this#evaluate_expression l) (this#evaluate_expression r)
+
+		method run_math operation = 
+			let math = new math in 
+				match operation with 
+					| Plus (l, r) 	-> math#plus 	(this#evaluate_expression l) (this#evaluate_expression r)
+					| Minus (l, r) 	-> math#minus 	(this#evaluate_expression l) (this#evaluate_expression r)
+					| Times (l, r) 	-> math#times 	(this#evaluate_expression l) (this#evaluate_expression r)
+					| Divide (l, r) -> math#divide 	(this#evaluate_expression l) (this#evaluate_expression r)
+					| Modulo (l, r) -> math#modulo 	(this#evaluate_expression l) (this#evaluate_expression r)
+					| Power (l, r) 	-> math#power 	(this#evaluate_expression l) (this#evaluate_expression r)
 
 	end;;

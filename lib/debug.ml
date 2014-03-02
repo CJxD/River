@@ -30,12 +30,17 @@ let getIdentifier = function
 
 let rec getExpression = function
 	  Literal (v) 			-> getLiteral v
+	| Group (e) 			-> "Expression(" ^ getExpression e ^ ")"
+	| Math (o) 				-> getMath o
+	| StreamAccess (s, i) 	-> "StreamAccess(" ^ getIdentifier s ^ ", " ^ string_of_int i ^ ")"
+and getMath = function
 	| Plus (l, r) 			-> "Plus(" ^ getExpression l ^ ", " ^ getExpression r ^ ")"
 	| Minus (l, r) 			-> "Minus(" ^ getExpression l ^ ", " ^ getExpression r ^ ")"
 	| Times (l, r) 			-> "Times(" ^ getExpression l ^ ", " ^ getExpression r ^ ")"
 	| Divide (l, r) 		-> "Divide(" ^ getExpression l ^ ", " ^ getExpression r ^ ")"
-	| Group (e) 			-> "Expression(" ^ getExpression e ^ ")"
-	| StreamAccess (s, i) 	-> "StreamAccess(" ^ getIdentifier s ^ ", " ^ string_of_int i ^ ")";;
+	| Modulo (l, r) 		-> "Modulo(" ^ getExpression l ^ ", " ^ getExpression r ^ ")"
+	| Power (l, r) 			-> "Power(" ^ getExpression l ^ ", " ^ getExpression r ^ ")";;
+
 
 let getCondition = function 
 	  Equality (l, r) 			-> "EqualityTest(" ^ getExpression l ^ ", " ^ getExpression r ^ ")"
