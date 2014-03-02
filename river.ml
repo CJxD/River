@@ -14,10 +14,6 @@ let _ =
 
 					if Array.length Sys.argv == 3 then
 						match Sys.argv.(2) with
-							| "-printast" -> 
-								print_string (getProgram program);
-								print_newline();
-								flush stdout
 							| "-ignoreinput" ->
 								interpreter#run program []
 							| "-input" ->

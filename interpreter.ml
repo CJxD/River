@@ -46,10 +46,10 @@ class interpreter =
  						(* Main loop of the program, execute the loop body & advance the streams *)
 
 						while true do 
-							
+
 							this#run_statement_list loop;
 
-							List.iter this#skip_all streams;
+							List.iter this#skip_stream_by_one streams;
 
 						done
 					with
@@ -78,19 +78,26 @@ class interpreter =
 				match number with
 					| 0 -> ()
 					| n -> 
-						let skipped_stream = List.tl (this#get_stream stream) in
-							streams <- List.remove_assoc stream streams;
-							streams <- (stream, skipped_stream) :: streams; 	
-							this#skip (number - 1) stream;
+						try 
+							let skipped_stream = List.tl (this#get_stream stream) in
+								streams <- List.remove_assoc stream streams;
+								streams <- (stream, skipped_stream) :: streams; 	
+								this#skip (number - 1) stream;
+						with
+							Failure e -> raise End_of_stream
 
-		method skip_all = function
-			| (identifier, _) -> this#skip 1 identifier
+		method skip_stream_by_one = function
+			| (identifier, _) -> 
+				this#skip 1 identifier;
+				if List.length (this#get_stream identifier) == 0 then
+					raise End_of_stream
 
 		method output value =
 			output <- value :: output
 
 		method update_binding identifier value = 
-			bindings <- (identifier, value) :: List.remove_assoc identifier bindings
+			bindings <- (identifier, value) :: List.remove_assoc identifier bindings;
+			value
 
 		method read_binding identifier =
 			try
@@ -112,14 +119,14 @@ class interpreter =
 								| Int (v) -> v
 								| _ -> raise (Fatal ("youve somehow stored a binding that isnt an int"))
 						end
-				| Math (operation) ->
-					this#run_math operation
+				| BinaryOperation (operation, left, right) ->
+					this#run_binary_operation operation left right
+				| UnaryOperation (operation, expression) ->
+					this#run_unary_operation operation expression
+				| Assignment (optype, identifier, value) ->
+					this#run_assignment optype identifier value
 				| Group (expression) -> 
 					this#evaluate_expression expression
-				| Assignment (identifier, expression) ->
-					let value = this#evaluate_expression expression in
-						this#update_binding identifier (Int value);
-						value
 				| StreamAccess (stream, index) -> 
 					try
 						List.nth (this#get_stream stream) index 	
@@ -131,30 +138,71 @@ class interpreter =
 			| Skip (elements, stream) 	-> this#skip elements stream
 			| Output (expression) 		-> this#output (this#evaluate_expression expression)
 			| If (condition, true_list, false_list) ->
-				if this#evaluate_condition condition then
-					this#run_statement_list true_list
-				else
-					this#run_statement_list false_list
+				match condition with 
+					| Condition (test, left, right) ->
+						if this#evaluate_condition test left right then
+							this#run_statement_list true_list
+						else
+							this#run_statement_list false_list
 
-		method evaluate_condition condition =
+		method evaluate_condition test left right =
 			let comparator = new comparison in
-				match condition with
-					| Equality (l, r)			-> comparator#int_equal 				(this#evaluate_expression l) (this#evaluate_expression r)
-					| NonEquality (l, r) 		-> comparator#int_not_equal 			(this#evaluate_expression l) (this#evaluate_expression r)
-					| LessThan (l, r) 			-> comparator#int_less_than 			(this#evaluate_expression l) (this#evaluate_expression r)
-					| GreaterThan (l, r) 		-> comparator#int_greater_than 			(this#evaluate_expression l) (this#evaluate_expression r)
-					| LessThanOrEqual (l, r) 	-> comparator#int_less_than_or_equal 	(this#evaluate_expression l) (this#evaluate_expression r)
-					| GreaterThanOrEqual (l, r) -> comparator#int_greater_than_or_equal (this#evaluate_expression l) (this#evaluate_expression r)
+			let x = this#evaluate_expression left in
+			let y = this#evaluate_expression right in 
+				match test with
+					| Equality 				-> comparator#int_equal x y 
+					| NonEquality 			-> comparator#int_not_equal x y 
+					| LessThan 				-> comparator#int_less_than x y 
+					| GreaterThan 			-> comparator#int_greater_than x y 
+					| LessThanOrEqual 		-> comparator#int_less_than_or_equal x y
+					| GreaterThanOrEqual 	-> comparator#int_greater_than_or_equal x y
 
-		method run_math operation = 
-			let math = new math in 
+		method run_binary_operation operation left right = 
+			let math = new math in
+			let x = this#evaluate_expression left in
+			let y = this#evaluate_expression right in
 				match operation with 
-					| Plus (l, r) 		-> math#plus 		(this#evaluate_expression l) (this#evaluate_expression r)
-					| Minus (l, r) 		-> math#minus 		(this#evaluate_expression l) (this#evaluate_expression r)
-					| Times (l, r) 		-> math#times 		(this#evaluate_expression l) (this#evaluate_expression r)
-					| Divide (l, r) 	-> math#divide 		(this#evaluate_expression l) (this#evaluate_expression r)
-					| Modulo (l, r) 	-> math#modulo 		(this#evaluate_expression l) (this#evaluate_expression r)
-					| Power (l, r) 		-> math#power 		(this#evaluate_expression l) (this#evaluate_expression r)
-					| UnaryMinus (e) 	-> math#unary_minus (this#evaluate_expression e)
+					| Plus 		-> math#plus x y 
+					| Minus 	-> math#minus x y
+					| Times 	-> math#times x y
+					| Divide 	-> math#divide x y
+					| Modulo 	-> math#modulo x y
+					| Power 	-> math#power x y 
 
+		method run_unary_operation operation expression = 
+			let math = new math in
+			let x = this#evaluate_expression expression in 
+				match operation with 
+					| UnaryMinus -> math#unary_minus x
+
+		method run_assignment optype identifier expression =
+			let evaluated = this#evaluate_expression expression in
+			match optype with 
+				| StandardAssign -> 
+					this#update_binding identifier (Int evaluated);
+					evaluated
+
+				(* StandardAssign & operation assigns need to be seperated,
+				   we want to check if the variable is assigned for operation assigns, 
+				   but we need to allow new variables for standard assigns *)
+
+				| _ ->
+					let current = this#read_binding identifier in 
+						match current with 	
+							| Int (n) ->
+								begin
+									match 
+										begin
+											match optype with
+												| PlusAssign -> this#update_binding identifier (Int (n + evaluated))
+												| MinusAssign -> this#update_binding identifier (Int (n - evaluated))
+												| TimesAssign -> this#update_binding identifier (Int (n * evaluated))
+												| DivideAssign -> this#update_binding identifier (Int (n / evaluated))
+										end 
+									with 
+										| Int (n) -> n
+										| _ -> raise (Fatal "smehow set as not an int")
+								end;
+							| _ -> raise (Fatal "current value isnt an int somehow")
+						
 	end;;

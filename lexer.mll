@@ -83,6 +83,10 @@ rule token = parse
 	(* Assignment *)
 
 	| '=' 					{ ASSIGN }
+	| "+=" 					{ PLUSASSIGN }
+	| "-=" 					{ MINUSASSIGN }
+	| "*=" 					{ TIMESASSIGN }
+	| "/=" 					{ DIVIDEASSIGN }
 
 	(* Unused *)
 

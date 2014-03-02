@@ -18,10 +18,11 @@ open Language
 %token EQ NEQ LTE GTE LT GT
 %token IF THEN ELSE
 %token USING BEGIN LOOP SKIP IN OUT
-%token ASSIGN
+%token ASSIGN PLUSASSIGN MINUSASSIGN TIMESASSIGN DIVIDEASSIGN
 
 %token XOR AND OR COMMA INCREMENT DECREMENT
 
+%right PLUSASSIGN MINUSASSIGN TIMESASSIGN DIVIDEASSIGN
 %right ASSIGN
 %left EQ NEQ
 %left GT GTE LT LTE
@@ -61,30 +62,38 @@ statement:
 
 expression:
 	  literal 						{ Literal $1 }
-	| IDENT ASSIGN expression 		{ Assignment ($1, $3) }
+	| assignment 					{ $1 }
+	| math 							{ $1 }
 	| IDENT 						{ Identifier $1 }
-	| math 							{ Math $1  }
 	| LPAREN expression RPAREN		{ Group $2 }
 	| IDENT LBRACKET INT RBRACKET 	{ StreamAccess ($1, $3) }
 ;
 
+assignment:
+	  IDENT ASSIGN expression 		{ Assignment (StandardAssign, $1, $3) }
+	| IDENT PLUSASSIGN expression 	{ Assignment (PlusAssign, $1, $3) }	
+	| IDENT MINUSASSIGN expression 	{ Assignment (MinusAssign, $1, $3) }	
+	| IDENT TIMESASSIGN expression 	{ Assignment (TimesAssign, $1, $3) }	
+	| IDENT DIVIDEASSIGN expression { Assignment (DivideAssign, $1, $3) }	
+;
+
 math:
-	  expression PLUS expression 	{ Plus ($1, $3)  }
-	| expression MINUS expression 	{ Minus ($1, $3) }
-	| expression TIMES expression 	{ Times ($1, $3) }
-	| expression DIVIDE expression 	{ Divide ($1, $3) } 
-	| expression MODULO expression 	{ Modulo ($1, $3) } 
-	| expression POWER expression 	{ Power ($1, $3) }
-	| MINUS expression %prec UMINUS { UnaryMinus $2 }
+	  expression PLUS expression 	{ BinaryOperation (Plus, $1, $3)  }
+	| expression MINUS expression 	{ BinaryOperation (Minus, $1, $3) }
+	| expression TIMES expression 	{ BinaryOperation (Times, $1, $3) }
+	| expression DIVIDE expression 	{ BinaryOperation (Divide, $1, $3) }
+	| expression MODULO expression 	{ BinaryOperation (Modulo, $1, $3) }
+	| expression POWER expression 	{ BinaryOperation (Power, $1, $3) }
+	| MINUS expression %prec UMINUS { UnaryOperation (UnaryMinus, $2) }
 ;
 
 condition:
-	  expression EQ expression 	{ Equality ($1, $3) }
-	| expression NEQ expression { NonEquality ($1, $3) }
-	| expression LT expression 	{ LessThan ($1, $3) }
-	| expression GT expression 	{ GreaterThan ($1, $3) }
-	| expression LTE expression { LessThanOrEqual ($1, $3) }
-	| expression GTE expression { GreaterThanOrEqual ($1, $3) }
+	  expression EQ expression 	{ Condition (Equality, $1, $3) }
+	| expression NEQ expression { Condition (NonEquality, $1, $3) }
+	| expression LT expression 	{ Condition (LessThan, $1, $3) }
+	| expression GT expression 	{ Condition (GreaterThan, $1, $3) }
+	| expression LTE expression { Condition (LessThanOrEqual, $1, $3) }
+	| expression GTE expression { Condition (GreaterThanOrEqual, $1, $3) }
 
 	 /* expression AND expression? / OR? */
 ;

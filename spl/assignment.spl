@@ -1,8 +1,14 @@
 
 with stream
 
+begin
+
+	testvar = 5;
+
 loop
 	
-	testvar = -stream[0];
+	testvar += 1;
+
+	// testvar = -stream[0];
 
 	out testvar;

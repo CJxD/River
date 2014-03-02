@@ -26,14 +26,6 @@ Or run all problem files with
 
 ### Debugging Features
 
-    bin/river spl/p1.spl -printast
-
-or
-
-    ./run 1 -printast
-
-Will print the AST for a source file and ignore any input.
-
     ./run 1 -input
 
 Will print out the stream lists after parsing the input.

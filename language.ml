@@ -14,29 +14,43 @@ type identifier_list =
 	  IdentifierList of string * identifier_list
 	| EndIdentifier;;
 
+type assignment = 
+	  StandardAssign
+	| PlusAssign
+	| MinusAssign
+	| TimesAssign
+	| DivideAssign;;
+
+type binary_operation = 
+	  Plus
+ 	| Minus
+ 	| Divide
+ 	| Times
+ 	| Modulo
+ 	| Power;;
+
+type unary_operation = 
+	  UnaryMinus;;
+
 type expression =
- 	  Literal 		of literal
- 	| Identifier 	of string 
- 	| StreamAccess 	of string * int
- 	| Math 			of math
- 	| Group 		of expression
- 	| Assignment 	of string * expression
- and math = 
-	  Plus 			of expression * expression
- 	| Minus 		of expression * expression
- 	| Divide 		of expression * expression
- 	| Times 		of expression * expression
- 	| Modulo 		of expression * expression
- 	| Power 		of expression * expression
- 	| UnaryMinus 	of expression;;
+ 	  Literal 			of literal
+ 	| Identifier 		of string 
+ 	| StreamAccess 		of string * int
+ 	| BinaryOperation 	of binary_operation * expression * expression
+ 	| UnaryOperation 	of unary_operation * expression
+ 	| Group 			of expression
+ 	| Assignment 		of assignment * string * expression;;
+
+type test = 
+	  Equality
+	| NonEquality
+	| LessThan
+	| GreaterThan
+	| LessThanOrEqual
+	| GreaterThanOrEqual;;
 
 type condition = 
-	  Equality 				of expression * expression
-	| NonEquality 			of expression * expression
-	| LessThan 				of expression * expression
-	| GreaterThan 			of expression * expression
-	| LessThanOrEqual 		of expression * expression
-	| GreaterThanOrEqual 	of expression * expression;;
+	 Condition of test * expression * expression;;
 
 type statement_list = 
 	  StatementList of statement * statement_list
