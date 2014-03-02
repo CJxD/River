@@ -2,43 +2,121 @@
 open Language
 open Math
 open Debug
+	
+class interpreter =
+	object (this)
 
-let rec run_expression = function  
-	| Literal (literal) 			-> getLiteral literal
-	| Plus (l, r) 					-> run_plus (run_expression l) (run_expression r)
-	| Minus (l, r) 					-> run_minus (run_expression l) (run_expression r)
-	| Times (l, r) 					-> run_times (run_expression l) (run_expression r)
-	| Divide (l, r) 				-> run_divide (run_expression l) (run_expression r)
-	| Group (e) 					-> "(" ^ run_expression e ^ ")"
-	| StreamAccess (stream, index) 	-> "Accessing element " ^ string_of_int index ^ " of stream " ^ stream;;
+		val mutable streams = ([] : (string * int list) list)
+		val mutable output = ([] : int list)
 
-let run_skip elements stream =
-	print_endline ("Skipping " ^ string_of_int elements ^ " in stream '" ^ stream ^ "'");;
+		method get_stream identifier = 
+			try
+				List.assoc identifier streams
+			with
+				Not_found -> 
+					print_endline "ENTERED ERROR CONDITION:";
+					Debug.debugAssocList streams;
+					raise (Fatal ("Use of undeclared identifier: " ^ identifier))
 
-let run_output expression = 
-	print_endline ("Outputting stream element: " ^ run_expression expression);;
+		method get_default_stream = 
+			if List.length streams == 1 then
+				match List.hd streams with
+					| (identifier, _) -> identifier
+			else
+				raise (Fatal "Omission of stream identifier in skip is forbidden when there is more than one stream defined")
 
-let run_statement = function
-	| Expression (expression) 	-> print_endline (run_expression expression)
-	| Skip (elements, stream) 	-> run_skip elements stream
-	| Output (expression) 		-> run_output expression
-	| If (_, _, _) 				-> ();;
+		method string_of_int_list = function
+			| value :: rest -> (string_of_int value) ^ " " ^ (this#string_of_int_list rest)
+			| [] -> ""
 
-let rec run_statement_list = function
-	| StatementList (statement, EndStatement) 	-> run_statement statement
-	| StatementList (statement, rest) 			-> run_statement statement; run_statement_list rest
-	| EndStatement 								-> ();;
+		method get_output = 
+			(string_of_int (List.length output)) ^ "\n" ^ 
+			String.trim (this#string_of_int_list (List.rev output))
 
-let load_stream identifier = 
-	print_endline ("Loading stream " ^ identifier);;
+		method run program stream_list = 
+			match program with 
+				| Program (using, start, loop) -> 
+					
+					this#define_streams using stream_list;
 
-let rec define_streams = function 
-	| IdentifierList (identifier, EndIdentifier) 	-> load_stream identifier
-	| IdentifierList (identifier, rest) 			-> load_stream identifier; define_streams rest
-	| EndIdentifier 								-> ();;
+					this#run_statement_list start;
 
-let run = function
-	| Program (using, start, loop) -> 
-		define_streams using;
-		run_statement_list start;
-		run_statement_list loop;;
+					try
+ 
+ 						(* Main loop of the program, execute the loop body & advance the streams *)
+
+						while true do 
+							
+							this#run_statement_list loop;
+
+							List.iter this#skip_all streams;
+
+						done
+					with
+						| End_of_stream -> ()
+
+		method define_streams identifier_list stream_list =
+			try
+				match identifier_list with 
+					| IdentifierList (identifier, rest) -> 
+						streams <- (identifier, (List.nth stream_list (List.length streams))) :: streams;
+						this#define_streams rest stream_list
+					| EndIdentifier -> ()
+			with
+				| Failure e -> raise (Fatal "using decleration count does not match the input stream count")
+
+		method run_statement_list = function
+			| StatementList (statement, rest) -> 
+				this#run_statement statement; 
+				this#run_statement_list rest
+			| EndStatement -> ()
+
+		method skip number stream =
+			if String.length stream == 0 then
+				this#skip number this#get_default_stream
+			else
+				match number with
+					| 0 -> ()
+					| n -> 
+						let skipped_stream = List.tl (this#get_stream stream) in
+							streams <- List.remove_assoc stream streams;
+							streams <- (stream, skipped_stream) :: streams; 	
+							this#skip (number - 1) stream;
+
+		method skip_all = function
+			| (identifier, _) -> this#skip 1 identifier
+
+		method output value =
+			output <- value :: output
+
+		method evaluate_expression expression = 
+			let math = new math in 
+				match expression with
+					| Literal (literal) -> 
+						(match literal with 
+							| Int n -> n
+							| _ -> raise (Fatal "Invalid use of non-int literal in expression"))
+					| Plus (l, r) -> 
+						math#plus (this#evaluate_expression l) (this#evaluate_expression r)
+					| Minus (l, r) -> 
+						math#minus (this#evaluate_expression l) (this#evaluate_expression r)
+					| Times (l, r) -> 
+						math#times (this#evaluate_expression l) (this#evaluate_expression r)
+					| Divide (l, r) -> 
+						math#divide (this#evaluate_expression l) (this#evaluate_expression r)
+					| Group (e) -> 
+						this#evaluate_expression e
+					| StreamAccess (stream, index) -> 
+						try
+							List.nth (this#get_stream stream) index 	
+						with
+							| Failure e -> raise End_of_stream
+						
+
+		method run_statement = function
+			| Expression (expression) 	-> this#evaluate_expression expression; ()
+			| Skip (elements, stream) 	-> this#skip elements stream
+			| Output (expression) 		-> this#output (this#evaluate_expression expression)
+			| If (_, _, _) 				-> ()
+
+	end;;

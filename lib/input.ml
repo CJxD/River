@@ -22,6 +22,9 @@ let parse channel =
 
 			 			if List.length stream == stream_length then
 			 				streams := stream :: !streams
+
+							(* if stream list is now declared size raise end_of_file *)
+
 			 			else
 			 				raise (
 			 					Input_format_error (

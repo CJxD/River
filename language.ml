@@ -1,4 +1,8 @@
 
+exception Fatal of string;;
+exception Warning of string;;
+exception End_of_stream;;
+
 type literal = 
 	  Int 	of int
 	| Float of float
@@ -37,4 +41,3 @@ and statement =
 
 type program = 
 	  Program of identifier_list * statement_list * statement_list;;
-	

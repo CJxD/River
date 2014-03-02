@@ -1,12 +1,17 @@
 
-let run_plus a b = 
-	a ^ " + " ^ b;;
+class math = 
+	object(this)
 
-let run_minus a b = 
-	a ^ " - " ^ b;;
+		method plus x y = 
+			x + y
 
-let run_times a b = 
-	a ^ " * " ^ b;;
+		method minus x y = 
+			x - y
 
-let run_divide a b = 
-	a ^ " / " ^ b;;
+		method times x y = 
+			x * y
+
+		method divide x y = 
+			x / y
+
+	end;;

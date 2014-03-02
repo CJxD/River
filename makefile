@@ -19,7 +19,7 @@ LIBRARIES= str.cma
 
 # Compiler/Lexer/Parser commands
 
-CC=ocamlc -I $(OBJDIR) -I $(LIBDIR)
+CC=ocamlc -g -I $(OBJDIR) -I $(LIBDIR)
 LEX=ocamllex
 YACC=ocamlyacc
 

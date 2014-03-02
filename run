@@ -1,0 +1,21 @@
+#!/bin/bash
+
+TESTS=5
+
+if [ $1 = "all" ]
+then
+	
+	for i in $(seq 1 $TESTS);
+	do
+		
+		echo "Running problem $i"
+
+		bin/river spl/p$i.spl $2 < spl/p$i.input
+
+	done
+
+else
+	
+	bin/river spl/p$1.spl $2 < spl/p$1.input
+
+fi

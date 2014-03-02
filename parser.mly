@@ -16,10 +16,10 @@ open Language
 %token TRUE FALSE EOF
 %token EQ GTE LTE NEQ
 %token EOL
-%left PLUS MINUS		/* low precedence */
+%left PLUS MINUS
 %left TIMES DIVIDE MODULO  
 %left EXPONENTIAL 
-%nonassoc UMINUS        /* high precedence */
+%nonassoc UMINUS
 %start main
 %type <Language.program> main
 

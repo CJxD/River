@@ -3,9 +3,12 @@ open Language
 
 (* Print out a stream list list (strings) *)
 
-let rec printIntList = function
-	| (i :: rest) -> print_string ((string_of_int i) ^ " "); printIntList rest
-	| [] -> print_endline "";;
+let rec getIntList = function
+	| (i :: rest) -> string_of_int i ^ " " ^ getIntList rest
+	| [] -> "";;
+
+let printIntList intlist =
+	print_endline (getIntList intlist);;
 
 let rec printInput = function
 	| (value :: rest) -> 
@@ -57,3 +60,9 @@ let rec getIdentifierList = function
 
 let getProgram = function
 	  Program (s, b, l) -> "Program([" ^ getIdentifierList s ^ "], [" ^ getStatementList b ^ "], [" ^ getStatementList l ^ "])";;
+
+let rec debugAssocList = function
+	| (identifier, value) :: rest -> 
+		print_endline (identifier ^ " = " ^ getIntList value ^ "; ");
+		debugAssocList rest
+	| [] -> ();;
