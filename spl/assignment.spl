@@ -8,7 +8,12 @@ begin
 loop
 	
 	testvar += 1;
+	
+	if testvar % 2 == 0 then
 
-	// testvar = -stream[0];
+		testvar = -testvar;
+
+	endif
+
 
 	out testvar;

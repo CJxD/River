@@ -16,7 +16,7 @@ open Language
 %token LPAREN RPAREN
 %token LBRACKET RBRACKET
 %token EQ NEQ LTE GTE LT GT
-%token IF THEN ELSE
+%token IF THEN ELSE ENDIF
 %token USING BEGIN LOOP SKIP IN OUT
 %token ASSIGN PLUSASSIGN MINUSASSIGN TIMESASSIGN DIVIDEASSIGN
 
@@ -51,13 +51,16 @@ statement_list:
 ;
 
 statement: 
-	  expression EOL 										{ Expression $1 }
-	| SKIP EOL												{ Skip (1, "") }
-	| SKIP IN IDENT EOL 									{ Skip (1, $3) }
-	| SKIP INT EOL											{ Skip ($2, "") }  
-	| SKIP INT IN IDENT EOL 								{ Skip ($2, $4) }
-	| OUT expression EOL 									{ Output $2 }
-	| IF condition THEN statement_list ELSE statement_list 	{ If ($2, $4, $6) }
+	  expression EOL 												{ Expression $1 }
+	| SKIP EOL														{ Skip (1, "") }
+	| SKIP IN IDENT EOL 											{ Skip (1, $3) }
+	| SKIP INT EOL													{ Skip ($2, "") }  
+	| SKIP INT IN IDENT EOL 										{ Skip ($2, $4) }
+	| OUT expression EOL 											{ Output $2 }
+	| IF condition THEN statement_list ELSE statement_list ENDIF 	{ If ($2, $4, $6) }
+	| IF condition THEN statement_list ENDIF 						{ If ($2, $4, EndStatement) }
+	| IF condition THEN statement 									{ If ($2, StatementList ($4, EndStatement), EndStatement) }
+	| IF condition THEN statement ELSE statement 					{ If ($2, StatementList ($4, EndStatement), StatementList ($6, EndStatement)) }
 ;
 
 expression:
