@@ -5,4 +5,4 @@ with stream1, stream2
 
 loop
 	
-	out stream1[0] - (2 * stream2[0]);
+	out stream1: - (2 * stream2:);

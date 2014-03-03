@@ -5,5 +5,5 @@ with stream1, stream2
 
 loop
 	
-	out stream1[0];
-	out stream2[0];
+	out stream1:;
+	out stream2:;

@@ -9,4 +9,4 @@ begin
 
 loop
 	
-	out stream[0];
+	out stream:;

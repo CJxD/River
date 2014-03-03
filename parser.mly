@@ -14,7 +14,7 @@ open Language
 %token TRUE FALSE
 %token PLUS MINUS TIMES DIVIDE MODULO POWER
 %token LPAREN RPAREN
-%token LBRACKET RBRACKET
+%token LBRACKET RBRACKET CURRENT
 %token EQ NEQ LTE GTE LT GT
 %token IF THEN ELSE ENDIF
 %token USING BEGIN LOOP SKIP IN OUT
@@ -73,6 +73,13 @@ expression:
 	| IDENT 						{ Identifier $1 }
 	| LPAREN expression RPAREN		{ Group $2 }
 	| IDENT LBRACKET INT RBRACKET 	{ StreamAccess ($1, $3) }
+	| IDENT CURRENT 				{ StreamAccess ($1, 0) }
+	| IDENT shift_list 				{ StreamAccess ($1, $2) }
+;
+
+shift_list:
+	  GT 			{ 1 }
+	| shift_list GT { $1 + 1 }
 ;
 
 assignment:
