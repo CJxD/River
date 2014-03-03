@@ -123,6 +123,8 @@ class interpreter =
 					this#run_binary_operation operation left right
 				| UnaryOperation (operation, expression) ->
 					this#run_unary_operation operation expression
+				| VariableOperation (operation, identifier) ->
+					this#run_variable_operation operation identifier
 				| Assignment (optype, identifier, value) ->
 					this#run_assignment optype identifier value
 				| Group (expression) -> 
@@ -204,5 +206,27 @@ class interpreter =
 										| _ -> raise (Fatal "smehow set as not an int")
 								end;
 							| _ -> raise (Fatal "current value isnt an int somehow")
+
+		method run_variable_operation operation identifier = 
+			let current = this#read_binding identifier in
+			let one = Literal (Int 1) in
+				match current with 
+					| Int (n) ->
+						begin
+							match operation with 
+								| PostfixIncrement -> 
+									this#run_assignment PlusAssign identifier one; 
+									n
+								| PostfixDecrement -> 
+									this#run_assignment MinusAssign identifier one;
+									n
+								| PrefixIncrement ->
+									this#run_assignment PlusAssign identifier one;
+									n + 1;
+								| PrefixDecrement ->
+									this#run_assignment MinusAssign identifier one;
+									n - 1;
+						end
+					| _ -> raise (Fatal "incrementing/decrementing a non integer value")
 						
 	end;;

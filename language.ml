@@ -32,12 +32,19 @@ type binary_operation =
 type unary_operation = 
 	  UnaryMinus;;
 
+type variable_operation = 
+	  PostfixIncrement
+	| PostfixDecrement
+	| PrefixIncrement
+	| PrefixDecrement;;
+
 type expression =
  	  Literal 			of literal
  	| Identifier 		of string 
  	| StreamAccess 		of string * int
  	| BinaryOperation 	of binary_operation * expression * expression
  	| UnaryOperation 	of unary_operation * expression
+ 	| VariableOperation of variable_operation * string
  	| Group 			of expression
  	| Assignment 		of assignment * string * expression;;
 

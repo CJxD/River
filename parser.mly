@@ -18,9 +18,9 @@ open Language
 %token EQ NEQ LTE GTE LT GT
 %token IF THEN ELSE ENDIF
 %token USING BEGIN LOOP SKIP IN OUT
-%token ASSIGN PLUSASSIGN MINUSASSIGN TIMESASSIGN DIVIDEASSIGN
+%token ASSIGN PLUSASSIGN MINUSASSIGN TIMESASSIGN DIVIDEASSIGN INCREMENT DECREMENT
 
-%token XOR AND OR COMMA INCREMENT DECREMENT
+%token XOR AND OR NOT COMMA 
 
 %right PLUSASSIGN MINUSASSIGN TIMESASSIGN DIVIDEASSIGN
 %right ASSIGN
@@ -28,7 +28,9 @@ open Language
 %left GT GTE LT LTE
 %left PLUS MINUS 
 %left TIMES DIVIDE MODULO
-%nonassoc UMINUS
+%right UMINUS
+%right PREFIXINCREMENT PREFIXDECREMENT
+%left POSTFIXINCREMENT POSTFIXDECREMENT
 
 %start main
 %type <Language.program> main
@@ -67,6 +69,7 @@ expression:
 	  literal 						{ Literal $1 }
 	| assignment 					{ $1 }
 	| math 							{ $1 }
+	| variable_operation 			{ $1 }
 	| IDENT 						{ Identifier $1 }
 	| LPAREN expression RPAREN		{ Group $2 }
 	| IDENT LBRACKET INT RBRACKET 	{ StreamAccess ($1, $3) }
@@ -88,6 +91,13 @@ math:
 	| expression MODULO expression 	{ BinaryOperation (Modulo, $1, $3) }
 	| expression POWER expression 	{ BinaryOperation (Power, $1, $3) }
 	| MINUS expression %prec UMINUS { UnaryOperation (UnaryMinus, $2) }
+;
+
+variable_operation:
+	  IDENT INCREMENT %prec POSTFIXINCREMENT 	{ VariableOperation (PostfixIncrement, $1) }
+	| IDENT DECREMENT %prec POSTFIXDECREMENT 	{ VariableOperation (PostfixDecrement, $1) }
+	| INCREMENT IDENT %prec PREFIXINCREMENT 	{ VariableOperation (PrefixIncrement, $2) }
+	| DECREMENT IDENT %prec PREFIXDECREMENT 	{ VariableOperation (PrefixDecrement, $2) }
 ;
 
 condition:

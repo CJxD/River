@@ -88,12 +88,13 @@ rule token = parse
 	| "-=" 					{ MINUSASSIGN }
 	| "*=" 					{ TIMESASSIGN }
 	| "/=" 					{ DIVIDEASSIGN }
+	| "++" 					{ INCREMENT }
+	| "--" 					{ DECREMENT }
 
 	(* Unused *)
 
 	| '^' 					{ XOR }
 	| '&' 					{ AND }
 	| '|' 					{ OR }
+	| '~' 					{ NOT }
 	| ',' 					{ COMMA } 
-	| "++" 					{ INCREMENT }
-	| "--" 					{ DECREMENT }
