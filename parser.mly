@@ -61,8 +61,12 @@ statement:
 	| OUT expression EOL 											{ Output $2 }
 	| IF condition THEN statement_list ELSE statement_list ENDIF 	{ If ($2, $4, $6) }
 	| IF condition THEN statement_list ENDIF 						{ If ($2, $4, EndStatement) }
+	/*
+	such problems
+	wow
 	| IF condition THEN statement 									{ If ($2, StatementList ($4, EndStatement), EndStatement) }
 	| IF condition THEN statement ELSE statement 					{ If ($2, StatementList ($4, EndStatement), StatementList ($6, EndStatement)) }
+	*/
 ;
 
 expression:

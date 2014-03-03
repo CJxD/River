@@ -1,0 +1,16 @@
+
+with consecutive, repeating, random
+
+begin
+
+	skip 1 in repeating;
+
+loop
+
+	if consecutive: * repeating: < random: then
+
+		out -1;
+
+	endif
+
+	out random>> + repeating>>> * consecutive:;
