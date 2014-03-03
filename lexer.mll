@@ -51,7 +51,7 @@ rule token = parse
 	
 	| '[' 					{ LBRACKET }
 	| ']' 					{ RBRACKET }
-	| ':' 					{ CURRENT }
+	| '~' 					{ CURRENT }
 
 	(* Conditionals *)
 

@@ -7,10 +7,10 @@ begin
 
 loop
 
-	if consecutive: * repeating: < random: then
+	if consecutive~ * repeating~ < random~ then
 
 		out -1;
 
 	endif
 
-	out random>> + repeating>>> * consecutive:;
+	out random>> + repeating>>> * consecutive~;

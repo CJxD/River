@@ -5,6 +5,6 @@ with stream
 
 loop
 	
-	out stream:;
+	out stream~;
 	
 	skip;
