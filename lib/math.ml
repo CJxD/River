@@ -1,5 +1,6 @@
 
 open Language
+open Comparison
 
 exception Illegal_argument of string;;
 
@@ -62,10 +63,18 @@ class math =
 			| Float x, Float y -> Float (x ** y)
 			| _, _ -> raise (Illegal_argument "you may only perform math operations on numeric types.")
 
+		method min x y =
+			let comp = new comparison in
+			if (comp#less_than x y) then x else y
+			
+		method max x y =
+			let comp = new comparison in
+			if (comp#greater_than x y) then x else y
+			
 		method unary_minus x =
 			match x with
 			| Int x -> Int (0 - x)
 			| Float x -> Float (0. -. x)
 			| _ -> raise (Illegal_argument "you may only perform math operations on numeric types.")
-
+			
 	end;;
