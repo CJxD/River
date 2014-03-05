@@ -1,0 +1,8 @@
+
+with stream1, stream2
+
+loop
+	
+	out max(stream1~, stream2~);
+	
+

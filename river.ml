@@ -35,7 +35,7 @@ let _ =
 				| Language.Fatal e ->
 					print_endline ("Fatal error: " ^ e)
 				| Language.Undeclared_identifier i ->
-					print_endline ("Use of undelcared identifiers is disallowed, you used: " ^ i)
+					print_endline ("Use of undeclared identifiers is disallowed, you used: " ^ i)
 	with
 		Invalid_argument e -> 
 			print_endline "No input file specified.\nUsage: river <source file> <printast>"
