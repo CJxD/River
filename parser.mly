@@ -39,17 +39,17 @@ open Language
 
 main:
 	  USING identifier_list BEGIN statement_list LOOP statement_list EOF 	{ Program ($2, $4, $6) }
-	| USING identifier_list LOOP statement_list EOF 						{ Program ($2, EndStatement, $4) }
+	| USING identifier_list LOOP statement_list EOF 						{ Program ($2, [], $4) }
 ;
 
 identifier_list:
-	  IDENT 						{ IdentifierList ($1, EndIdentifier) }
-	| IDENT COMMA identifier_list 	{ IdentifierList ($1, $3) }
+	  IDENT 						{ [ $1 ] }
+	| IDENT COMMA identifier_list 	{ $1 :: $3 }
 ;
 
 statement_list:
-	  statement 				{ StatementList ($1, EndStatement) }
-	| statement statement_list 	{ StatementList ($1, $2) }
+	  statement 				{ [ $1 ] }
+	| statement statement_list 	{ $1 :: $2 }
 ;
 
 statement: 
@@ -60,7 +60,7 @@ statement:
 	| SKIP INT IN IDENT EOL 										{ Skip ($2, $4) }
 	| OUT expression EOL 											{ Output $2 }
 	| IF condition THEN statement_list ELSE statement_list ENDIF 	{ If ($2, $4, $6) }
-	| IF condition THEN statement_list ENDIF 						{ If ($2, $4, EndStatement) }
+	| IF condition THEN statement_list ENDIF 						{ If ($2, $4, []) }
 	/*
 	such problems
 	wow
@@ -69,16 +69,22 @@ statement:
 	*/
 ;
 
+expression_list:
+	  expression 					{ [ $1 ] }
+	| expression expression_list 	{ $1 :: $2 }
+;
+
 expression:
-	  literal 						{ Literal $1 }
-	| assignment 					{ $1 }
-	| math 							{ $1 }
-	| variable_operation 			{ $1 }
-	| IDENT 						{ Identifier $1 }
-	| LPAREN expression RPAREN		{ Group $2 }
-	| IDENT LBRACKET INT RBRACKET 	{ StreamAccess ($1, $3) }
-	| IDENT CURRENT 				{ StreamAccess ($1, 0) }
-	| IDENT shift_list 				{ StreamAccess ($1, $2) }
+	  literal 								{ Literal $1 }
+	| assignment 							{ $1 }
+	| math 									{ $1 }
+	| variable_operation 					{ $1 }
+	| IDENT LPAREN expression_list RPAREN 	{ Application ($1, $3) }
+	| IDENT 								{ Identifier $1 }
+	| LPAREN expression RPAREN				{ Group $2 }
+	| IDENT LBRACKET INT RBRACKET 			{ StreamAccess ($1, $3) }
+	| IDENT CURRENT 						{ StreamAccess ($1, 0) }
+	| IDENT shift_list 						{ StreamAccess ($1, $2) }
 ;
 
 shift_list:

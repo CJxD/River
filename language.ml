@@ -10,10 +10,6 @@ type literal =
 	| Bool 	of bool
 	| Char 	of char;;
 
-type identifier_list = 
-	  IdentifierList of string * identifier_list
-	| EndIdentifier;;
-
 type assignment = 
 	  StandardAssign
 	| PlusAssign
@@ -42,6 +38,7 @@ type expression =
  	  Literal 			of literal
  	| Identifier 		of string 
  	| StreamAccess 		of string * int
+ 	| Application 		of string * expression list
  	| BinaryOperation 	of binary_operation * expression * expression
  	| UnaryOperation 	of unary_operation * expression
  	| VariableOperation of variable_operation * string
@@ -59,14 +56,11 @@ type test =
 type condition = 
 	 Condition of test * expression * expression;;
 
-type statement_list = 
-	  StatementList of statement * statement_list
-	| EndStatement
-and statement = 
+type statement = 
 	  Expression 	of expression
 	| Skip 			of int * string
 	| Output 		of expression
-	| If 			of condition * statement_list * statement_list;;
+	| If 			of condition * statement list * statement list;;
 
 type program = 
-	  Program of identifier_list * statement_list * statement_list;;
+	  Program of string list * statement list * statement list;;

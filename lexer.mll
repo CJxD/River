@@ -92,10 +92,14 @@ rule token = parse
 	| "++" 					{ INCREMENT }
 	| "--" 					{ DECREMENT }
 
+	(* Function Application Expression Lists *)
+
+	| ',' 					{ COMMA } 
+
 	(* Unused *)
 
 	| '^' 					{ XOR }
 	| '&' 					{ AND }
 	| '|' 					{ OR }
 	| '~' 					{ NOT }
-	| ',' 					{ COMMA } 
+	

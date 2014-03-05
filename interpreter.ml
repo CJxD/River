@@ -34,8 +34,7 @@ class interpreter =
 			| [] -> ""
 
 		method get_output = 
-			(string_of_int (List.length output)) ^ "\n" ^ 
-			string_trim (this#string_of_list output)
+			(string_of_int (List.length output)) ^ "\n" ^ string_trim (this#string_of_list output)
 
 		method run program stream_list = 
 			match program with 
@@ -62,18 +61,18 @@ class interpreter =
 		method define_streams identifier_list stream_list =
 			try
 				match identifier_list with 
-					| IdentifierList (identifier, rest) -> 
+					| identifier :: rest -> 
 						streams <- (identifier, (List.nth stream_list (List.length streams))) :: streams;
 						this#define_streams rest stream_list
-					| EndIdentifier -> ()
+					| [] -> ()
 			with
 				| Failure e -> raise (Fatal "'with' decleration does not match the number of input streams")
 
 		method run_statement_list = function
-			| StatementList (statement, rest) -> 
+			| statement :: rest -> 
 				this#run_statement statement; 
 				this#run_statement_list rest
-			| EndStatement -> ()
+			| [] -> ()
 
 		method skip number stream =
 			if String.length stream == 0 then
@@ -116,6 +115,8 @@ class interpreter =
 					literal
 				| Identifier (identifier) ->
 					this#read_binding identifier
+				| Application (identifier, arguments) ->
+					this#apply_function identifier arguments
 				| BinaryOperation (operation, left, right) ->
 					this#run_binary_operation operation left right
 				| UnaryOperation (operation, expression) ->
@@ -215,5 +216,25 @@ class interpreter =
 					| PrefixDecrement ->
 						this#run_assignment MinusAssign identifier one;
 						math#minus n (Int 1)
-						
+		
+		method apply_function identifier argument_list =
+			let arguments = List.map this#evaluate_expression argument_list in
+			let comparison = new comparison in 
+				try
+					match identifier with
+						| "min" -> 
+							if comparison#less_than (List.nth arguments 0) (List.nth arguments 1) then
+								(List.nth arguments 0)
+							else 
+								(List.nth arguments 1)
+						| "max" ->
+							if comparison#greater_than (List.nth arguments 0) (List.nth arguments 1) then
+								(List.nth arguments 0)
+							else 
+								(List.nth arguments 1)
+				with
+					| Failure e -> 
+						match e with 
+							| "nth" -> raise (Fatal ("Incorrect number of arguments specified for " ^ identifier))
+
 	end;;
