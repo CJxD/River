@@ -146,34 +146,31 @@ class interpreter =
 							this#run_statement_list false_list
 
 		method evaluate_condition test left right =
-			let comparator = new comparison in
 			let x = this#evaluate_expression left in
 			let y = this#evaluate_expression right in 
 				match test with
-					| Equality 				-> comparator#equal x y 
-					| NonEquality 			-> comparator#not_equal x y 
-					| LessThan 				-> comparator#less_than x y 
-					| GreaterThan 			-> comparator#greater_than x y 
-					| LessThanOrEqual 		-> comparator#less_than_or_equal x y
-					| GreaterThanOrEqual 	-> comparator#greater_than_or_equal x y
+					| Equality 				-> Comparison.equal x y 
+					| NonEquality 			-> Comparison.not_equal x y 
+					| LessThan 				-> Comparison.less_than x y 
+					| GreaterThan 			-> Comparison.greater_than x y 
+					| LessThanOrEqual 		-> Comparison.less_than_or_equal x y
+					| GreaterThanOrEqual 	-> Comparison.greater_than_or_equal x y
 
 		method run_binary_operation operation left right = 
-			let math = new math in
 			let x = this#evaluate_expression left in
 			let y = this#evaluate_expression right in
 				match operation with 
-					| Plus 		-> math#plus x y
-					| Minus 	-> math#minus x y
-					| Times 	-> math#times x y
-					| Divide 	-> math#divide x y
-					| Modulo 	-> math#modulo x y
-					| Power 	-> math#power x y 
+					| Plus 		-> Math.plus x y
+					| Minus 	-> Math.minus x y
+					| Times 	-> Math.times x y
+					| Divide 	-> Math.divide x y
+					| Modulo 	-> Math.modulo x y
+					| Power 	-> Math.power x y 
 
 		method run_unary_operation operation expression = 
-			let math = new math in
 			let x = this#evaluate_expression expression in 
 				match operation with 
-					| UnaryMinus -> math#unary_minus x
+					| UnaryMinus -> Math.unary_minus x
 
 		method run_assignment optype identifier expression =
 			let evaluated = this#evaluate_expression expression in
@@ -187,20 +184,18 @@ class interpreter =
 				   but we need to allow new variables for standard assigns *)
 
 				| _ ->
-					let math = new math in
 					let n = this#read_binding identifier in 
 						match optype with
 							| PlusAssign ->
-								this#update_binding identifier (math#plus n evaluated)
+								this#update_binding identifier (Math.plus n evaluated)
 							| MinusAssign ->
-								this#update_binding identifier (math#minus n evaluated)
+								this#update_binding identifier (Math.minus n evaluated)
 							| TimesAssign ->
-								this#update_binding identifier (math#times n evaluated)
+								this#update_binding identifier (Math.times n evaluated)
 							| DivideAssign ->
-								this#update_binding identifier (math#divide n evaluated)
+								this#update_binding identifier (Math.divide n evaluated)
 
 		method run_variable_operation operation identifier =
-			let math = new math in
 			let n = this#read_binding identifier in
 			let one = Literal (Int 1) in
 				match operation with 
@@ -212,23 +207,22 @@ class interpreter =
 						n
 					| PrefixIncrement ->
 						this#run_assignment PlusAssign identifier one;
-						math#plus n (Int 1)
+						Math.plus n (Int 1)
 					| PrefixDecrement ->
 						this#run_assignment MinusAssign identifier one;
-						math#minus n (Int 1)
+						Math.minus n (Int 1)
 		
 		method apply_function identifier argument_list =
 			let arguments = List.map this#evaluate_expression argument_list in
-			let comparison = new comparison in 
 				try
 					match identifier with
 						| "min" -> 
-							if comparison#less_than (List.nth arguments 0) (List.nth arguments 1) then
+							if Comparison.less_than (List.nth arguments 0) (List.nth arguments 1) then
 								(List.nth arguments 0)
 							else 
 								(List.nth arguments 1)
 						| "max" ->
-							if comparison#greater_than (List.nth arguments 0) (List.nth arguments 1) then
+							if Comparison.greater_than (List.nth arguments 0) (List.nth arguments 1) then
 								(List.nth arguments 0)
 							else 
 								(List.nth arguments 1)
