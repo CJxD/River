@@ -2,7 +2,7 @@
 open Language
 open Comparison
 
-exception Illegal_argument of string;;
+exception Invalid_argument of string;;
 
 let plus x y = 
 	match x, y with
@@ -10,7 +10,7 @@ let plus x y =
 	| Int x, Float y -> Float (float_of_int x +. y)
 	| Float x, Int y -> Float (x +. float_of_int y)
 	| Float x, Float y -> Float (x +. y)
-	| _, _ -> raise (Illegal_argument "you may only perform math operations on numeric types.")
+	| _, _ -> raise (Invalid_argument "you may only perform math operations on numeric types.")
 
 let minus x y = 
 	match x, y with
@@ -18,7 +18,7 @@ let minus x y =
 	| Int x, Float y -> Float (float_of_int x -. y)
 	| Float x, Int y -> Float (x -. float_of_int y)
 	| Float x, Float y -> Float (x -. y)
-	| _, _ -> raise (Illegal_argument "you may only perform math operations on numeric types.")
+	| _, _ -> raise (Invalid_argument "you may only perform math operations on numeric types.")
 
 let times x y = 
 	match x, y with
@@ -26,7 +26,7 @@ let times x y =
 	| Int x, Float y -> Float (float_of_int x *. y)
 	| Float x, Int y -> Float (x *. float_of_int y)
 	| Float x, Float y -> Float (x *. y)
-	| _, _ -> raise (Illegal_argument "you may only perform math operations on numeric types.")
+	| _, _ -> raise (Invalid_argument "you may only perform math operations on numeric types.")
 
 let divide x y = 
 	match x, y with
@@ -34,7 +34,7 @@ let divide x y =
 	| Int x, Float y -> Float (float_of_int x /. y)
 	| Float x, Int y -> Float (x /. float_of_int y)
 	| Float x, Float y -> Float (x /. y)
-	| _, _ -> raise (Illegal_argument "you may only perform math operations on numeric types.")
+	| _, _ -> raise (Invalid_argument "you may only perform math operations on numeric types.")
 
 let modulo x y = 
 	match x, y with
@@ -42,7 +42,7 @@ let modulo x y =
 	| Int x, Float y -> Float (mod_float (float_of_int x) y)
 	| Float x, Int y -> Float (mod_float x (float_of_int y))
 	| Float x, Float y -> Float (mod_float x y)
-	| _, _ -> raise (Illegal_argument "you may only perform math operations on numeric types.")
+	| _, _ -> raise (Invalid_argument "you may only perform math operations on numeric types.")
 
 let rec power x y =
 	match x, y with
@@ -58,7 +58,7 @@ let rec power x y =
 	| Int x, Float y -> Float (float_of_int x ** y)
 	| Float x, Int y -> Float (x ** float_of_int y)
 	| Float x, Float y -> Float (x ** y)
-	| _, _ -> raise (Illegal_argument "you may only perform math operations on numeric types.")
+	| _, _ -> raise (Invalid_argument "you may only perform math operations on numeric types.")
 
 let min x y =
 	if (Comparison.less_than x y) then x else y
@@ -70,4 +70,4 @@ let unary_minus x =
 	match x with
 	| Int x -> Int (0 - x)
 	| Float x -> Float (0. -. x)
-	| _ -> raise (Illegal_argument "you may only perform math operations on numeric types.")
+	| _ -> raise (Invalid_argument "you may only perform math operations on numeric types.")
