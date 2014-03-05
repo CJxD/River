@@ -9,6 +9,7 @@ open Language
 %token <bool> BOOL 
 %token <char> CHAR
 %token <string> IDENT
+%token <string> STRING
 
 %token EOF EOL
 %token TRUE FALSE
@@ -18,12 +19,15 @@ open Language
 %token EQ NEQ LTE GTE LT GT
 %token IF THEN ELSE ENDIF
 %token USING BEGIN LOOP SKIP IN OUT
+%token AND OR
 %token ASSIGN PLUSASSIGN MINUSASSIGN TIMESASSIGN DIVIDEASSIGN INCREMENT DECREMENT
 
 %token XOR AND OR NOT COMMA 
 
 %right PLUSASSIGN MINUSASSIGN TIMESASSIGN DIVIDEASSIGN
 %right ASSIGN
+%left OR
+%left AND 
 %left EQ NEQ
 %left GT GTE LT LTE
 %left PLUS MINUS 
@@ -124,13 +128,14 @@ condition:
 	| expression GT expression 	{ Condition (GreaterThan, $1, $3) }
 	| expression LTE expression { Condition (LessThanOrEqual, $1, $3) }
 	| expression GTE expression { Condition (GreaterThanOrEqual, $1, $3) }
-
-	 /* expression AND expression? / OR? */
+	| expression AND expression { Condition (LogicalAnd, $1, $3) }
+	| expression OR expression 	{ Condition (LogicalOr, $1, $3) }
 ;
 
 literal:
-	  INT 	{ Int $1 }
-	| FLOAT { Float $1 }
-	| CHAR 	{ Char $1 }
-	| BOOL 	{ Bool $1 }
+	  INT 		{ Int $1 }
+	| FLOAT 	{ Float $1 }
+	| CHAR 		{ Char $1 }
+	| BOOL 		{ Bool $1 }
+	| STRING 	{ String $1 }
 ;

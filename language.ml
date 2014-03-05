@@ -3,7 +3,8 @@ type literal =
 	  Int 	of int
 	| Float of float
 	| Bool 	of bool
-	| Char 	of char;;
+	| Char 	of char
+	| String of string;;
 
 type assignment = 
 	  StandardAssign
@@ -46,7 +47,9 @@ type test =
 	| LessThan
 	| GreaterThan
 	| LessThanOrEqual
-	| GreaterThanOrEqual;;
+	| GreaterThanOrEqual
+	| LogicalAnd
+	| LogicalOr;;
 
 type condition = 
 	 Condition of test * expression * expression;;

@@ -32,6 +32,7 @@ rule token = parse
 	| bool 					{ BOOL(bool_of_string (Lexing.lexeme lexbuf)) }
 	| "true" 				{ TRUE }
 	| "false" 				{ FALSE }
+	| '"' [^ '"']* '"'		{ let s = Lexing.lexeme lexbuf in STRING(String.sub s 1 ((String.length s) - 2)) }
 
 	(* Math Operators *)
 
@@ -77,6 +78,11 @@ rule token = parse
 	| "skip"                { SKIP }
 	| "in"					{ IN }
 	| "out" 				{ OUT }
+
+	(* Conditionals *)
+
+	| "and" 				{ AND }
+	| "or" 					{ OR }
 	
 	(* Identifiers *)
 

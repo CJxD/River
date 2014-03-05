@@ -51,13 +51,22 @@ class interpreter =
 			| Float value :: rest -> (string_of_float value) ^ " " ^ (this#string_of_list rest)
 			| Char value :: rest -> (String.make 1 value) ^ " " ^ (this#string_of_list rest)
 			| Bool value :: rest -> (string_of_bool value) ^ " " ^ (this#string_of_list rest)
+			| String value :: rest -> "'" ^ value ^ "' " ^ (this#string_of_list rest)
 			| [] -> ""
 
 		method get_output = 
 			(string_of_int (List.length output)) ^ "\n" ^ string_trim (this#string_of_list output)
 
-		method output value =
-			output <- output @ [value]
+		method output = function 
+			| String s -> raise (Invalid_argument "You cannot pass a string literal to out")
+			| value -> output <- output @ [value]
+
+		method print_literal = function 
+			| Int n -> print_string (string_of_int n)
+			| Float n -> print_string (string_of_float n)
+			| Bool b -> print_string (string_of_bool b)
+			| Char c -> print_string (String.make 1 c)
+			| String s -> print_string s
 
 		(* Stream Skipping operations *)
 
@@ -174,6 +183,8 @@ class interpreter =
 					| GreaterThan 			-> Comparison.greater_than x y 
 					| LessThanOrEqual 		-> Comparison.less_than_or_equal x y
 					| GreaterThanOrEqual 	-> Comparison.greater_than_or_equal x y
+					| LogicalAnd 			-> Comparison.logical_and x y
+					| LogicalOr 			-> Comparison.logical_or x y
 
 		method run_binary_operation operation left right = 
 			let x = this#evaluate_expression left in
@@ -235,9 +246,16 @@ class interpreter =
 			let arguments = List.map this#evaluate_expression argument_list in
 				try
 					match identifier with
-						| "min" -> Math.min (List.nth arguments 0) (List.nth arguments 1)
-						| "max" -> Math.max (List.nth arguments 0) (List.nth arguments 1)
+						| "min" 	-> Math.min (List.nth arguments 0) (List.nth arguments 1)
+						| "max" 	-> Math.max (List.nth arguments 0) (List.nth arguments 1)
 						| "average" -> Math.average arguments
+						| "round" 	-> Math.round (List.nth arguments 0)
+						| "floor" 	-> Math.floor (List.nth arguments 0)
+						| "ceil" 	-> Math.ceil (List.nth arguments 0)
+						| "debug" -> 
+							List.map (fun l -> this#print_literal l; print_string " ") arguments; 
+							print_endline ""; 
+							Int 0
 						| _ -> raise (Fatal ("Call to undeclared function " ^ identifier))
 				with
 					| Failure e -> 

@@ -1,0 +1,14 @@
+
+with stream1, stream2
+
+begin
+
+	debug("entered begin");
+
+loop
+	
+	debug("doing loop with: ", stream1~, stream2~);
+
+	out average(stream1~, stream2~);
+	
+

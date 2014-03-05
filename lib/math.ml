@@ -72,3 +72,18 @@ let unary_minus x =
 
 let rec average values =
 	divide (List.fold_left plus (Float 0.0) values) (Int (List.length values))
+
+let round = function
+	| Float n -> Int (int_of_float (floor (n +. 0.5)))
+	| Int n -> Int n
+	| _ -> raise (Invalid_argument "You can only round numeric types")
+
+let floor = function
+	| Float n -> Float (floor n)
+	| Int n -> Float (float_of_int n)
+	| _ -> raise (Invalid_argument "You can only floor numeric types")
+
+let ceil = function
+	| Float n -> Float (ceil n)
+	| Int n -> Float (float_of_int n)
+	| _ -> raise (Invalid_argument "You can only ceil numeric types")
