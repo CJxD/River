@@ -142,12 +142,10 @@ class interpreter =
 			| Skip (elements, stream) 	-> this#skip elements stream
 			| Output (expression) 		-> this#output (this#evaluate_expression expression)
 			| If (condition, true_list, false_list) ->
-				match condition with 
-					| Condition (test, left, right) ->
-						if this#evaluate_condition test left right then
-							this#run_statement_list true_list
-						else
-							this#run_statement_list false_list
+				if this#evaluate_condition condition then
+					this#run_statement_list true_list
+				else
+					this#run_statement_list false_list
 
 		method evaluate_expression expression = 
 			match expression with
@@ -173,7 +171,21 @@ class interpreter =
 					with
 						| Failure e -> raise End_of_stream
 
-		method evaluate_condition test left right =
+		method evaluate_condition condition =
+			match condition with 
+				| UnaryCondition test -> 
+					begin
+						match test with 
+							| Test (optype, left, right) -> this#evaluate_test optype left right
+					end
+				| BinaryCondition (condtype, left, right) ->
+					let x = this#evaluate_condition left in
+					let y = this#evaluate_condition right in
+						match condtype with 
+							| LogicalAnd -> x && y
+							| LogicalOr -> x || y
+
+		method evaluate_test test left right =
 			let x = this#evaluate_expression left in
 			let y = this#evaluate_expression right in 
 				match test with
@@ -183,8 +195,6 @@ class interpreter =
 					| GreaterThan 			-> Comparison.greater_than x y 
 					| LessThanOrEqual 		-> Comparison.less_than_or_equal x y
 					| GreaterThanOrEqual 	-> Comparison.greater_than_or_equal x y
-					| LogicalAnd 			-> Comparison.logical_and x y
-					| LogicalOr 			-> Comparison.logical_or x y
 
 		method run_binary_operation operation left right = 
 			let x = this#evaluate_expression left in

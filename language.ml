@@ -41,18 +41,24 @@ type expression =
  	| Group 			of expression
  	| Assignment 		of assignment * string * expression;;
 
-type test = 
+type test_type = 
 	  Equality
 	| NonEquality
 	| LessThan
 	| GreaterThan
 	| LessThanOrEqual
-	| GreaterThanOrEqual
-	| LogicalAnd
+	| GreaterThanOrEqual;;
+
+type test = 
+	  Test of test_type * expression * expression;;
+
+type condition_type = 
+	  LogicalAnd
 	| LogicalOr;;
 
 type condition = 
-	 Condition of test * expression * expression;;
+	  BinaryCondition of condition_type * condition * condition
+	| UnaryCondition of test;;
 
 type statement = 
 	  Expression 	of expression

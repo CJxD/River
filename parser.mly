@@ -122,14 +122,18 @@ variable_operation:
 ;
 
 condition:
-	  expression EQ expression 	{ Condition (Equality, $1, $3) }
-	| expression NEQ expression { Condition (NonEquality, $1, $3) }
-	| expression LT expression 	{ Condition (LessThan, $1, $3) }
-	| expression GT expression 	{ Condition (GreaterThan, $1, $3) }
-	| expression LTE expression { Condition (LessThanOrEqual, $1, $3) }
-	| expression GTE expression { Condition (GreaterThanOrEqual, $1, $3) }
-	| expression AND expression { Condition (LogicalAnd, $1, $3) }
-	| expression OR expression 	{ Condition (LogicalOr, $1, $3) }
+	 test 						{ UnaryCondition $1 }
+	| condition AND condition 	{ BinaryCondition (LogicalAnd, $1, $3) }
+	| condition OR condition 	{ BinaryCondition (LogicalOr, $1, $3) }
+;
+
+test:
+	  expression EQ expression 	{ Test (Equality, $1, $3) }
+	| expression NEQ expression { Test (NonEquality, $1, $3) }
+	| expression LT expression 	{ Test (LessThan, $1, $3) }
+	| expression GT expression 	{ Test (GreaterThan, $1, $3) }
+	| expression LTE expression { Test (LessThanOrEqual, $1, $3) }
+	| expression GTE expression { Test (GreaterThanOrEqual, $1, $3) }
 ;
 
 literal:

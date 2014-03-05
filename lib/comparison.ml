@@ -128,13 +128,3 @@ let less_than_or_equal x y =
 
 let greater_than_or_equal x y = 
 	(greater_than x y) || (equal x y)
-
-let logical_and x y =
-	match x, y with
-		| Bool x, Bool y -> x && y
-		| _, _ -> raise (Invalid_argument "You cannot use logical and on non boolean expressions")
-
-let logical_or x y = 
-	match x, y with
-		| Bool x, Bool y -> x || y
-		| _, _ -> raise (Invalid_argument "You cannot use logical or on non boolean expressions")
