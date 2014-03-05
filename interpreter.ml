@@ -9,8 +9,10 @@ class interpreter =
 	object (this)
 
 		val mutable streams = ([] : (string * literal list) list)
-		val mutable output = ([] : literal list)
 		val mutable bindings = ([] : (string * literal) list)
+		val mutable output = ([] : literal list)
+
+		(* Stream Bindings *)
 
 		method get_stream identifier = 
 			try
@@ -22,12 +24,24 @@ class interpreter =
 					else
 						raise (Undeclared_identifier identifier)
 
-		method get_default_stream = 
+		method get_default_stream_identifier = 
 			if List.length streams == 1 then
 				match List.hd streams with
 					| (identifier, _) -> identifier
 			else
 				raise (Fatal "Omission of stream identifier in skip is forbidden when there is more than one stream defined")
+
+		method define_streams identifier_list stream_list =
+			try
+				match identifier_list with 
+					| identifier :: rest -> 
+						streams <- (identifier, (List.nth stream_list (List.length streams))) :: streams;
+						this#define_streams rest stream_list
+					| [] -> ()
+			with
+				| Failure e -> raise (Fatal "'with' decleration does not match the number of input streams")
+
+		(* Output *)
 
 		method string_of_list = function
 			| Int value :: rest -> (string_of_int value) ^ " " ^ (this#string_of_list rest)
@@ -39,6 +53,50 @@ class interpreter =
 		method get_output = 
 			(string_of_int (List.length output)) ^ "\n" ^ string_trim (this#string_of_list output)
 
+		method output value =
+			output <- output @ [value]
+
+		(* Stream Skipping operations *)
+
+		method skip number stream =
+			if String.length stream == 0 then
+				this#skip number this#get_default_stream_identifier
+			else
+				match number with
+					| 0 -> ()
+					| n -> 
+						try 
+							let skipped_stream = List.tl (this#get_stream stream) in
+								streams <- List.remove_assoc stream streams;
+								streams <- (stream, skipped_stream) :: streams; 	
+								this#skip (number - 1) stream;
+						with
+							Failure e -> raise End_of_stream
+
+		method skip_stream_by_one = function
+			| (identifier, _) -> 
+				this#skip 1 identifier;
+				if List.length (this#get_stream identifier) == 0 then
+					raise End_of_stream
+
+		(* Bindings read/write *)
+
+		method read_binding identifier =
+			try
+				List.assoc identifier bindings
+			with
+				Not_found ->
+					if List.mem_assoc identifier streams then
+						raise (Fatal ("Use of stream " ^ identifier ^ " in variable context is not allowed. Did you forget ~?"))
+					else
+						raise (Undeclared_identifier identifier)
+
+		method update_binding identifier value = 
+			bindings <- (identifier, value) :: List.remove_assoc identifier bindings;
+			value
+
+		(* Interpreter *)
+					
 		method run program stream_list = 
 			match program with 
 				| Program (using, start, loop) -> 
@@ -61,59 +119,23 @@ class interpreter =
 					with
 						| End_of_stream -> ()
 
-		method define_streams identifier_list stream_list =
-			try
-				match identifier_list with 
-					| identifier :: rest -> 
-						streams <- (identifier, (List.nth stream_list (List.length streams))) :: streams;
-						this#define_streams rest stream_list
-					| [] -> ()
-			with
-				| Failure e -> raise (Fatal "'with' decleration does not match the number of input streams")
-
 		method run_statement_list = function
 			| statement :: rest -> 
 				this#run_statement statement; 
 				this#run_statement_list rest
 			| [] -> ()
 
-		method skip number stream =
-			if String.length stream == 0 then
-				this#skip number this#get_default_stream
-			else
-				match number with
-					| 0 -> ()
-					| n -> 
-						try 
-							let skipped_stream = List.tl (this#get_stream stream) in
-								streams <- List.remove_assoc stream streams;
-								streams <- (stream, skipped_stream) :: streams; 	
-								this#skip (number - 1) stream;
-						with
-							Failure e -> raise End_of_stream
-
-		method skip_stream_by_one = function
-			| (identifier, _) -> 
-				this#skip 1 identifier;
-				if List.length (this#get_stream identifier) == 0 then
-					raise End_of_stream
-
-		method output value =
-			output <- output @ [value]
-
-		method update_binding identifier value = 
-			bindings <- (identifier, value) :: List.remove_assoc identifier bindings;
-			value
-
-		method read_binding identifier =
-			try
-				List.assoc identifier bindings
-			with
-				Not_found ->
-					if List.mem_assoc identifier streams then
-						raise (Fatal ("Use of stream " ^ identifier ^ " in variable context is not allowed. Did you forget ~?"))
-					else
-						raise (Undeclared_identifier identifier)
+		method run_statement = function
+			| Expression (expression) 	-> this#evaluate_expression expression; ()
+			| Skip (elements, stream) 	-> this#skip elements stream
+			| Output (expression) 		-> this#output (this#evaluate_expression expression)
+			| If (condition, true_list, false_list) ->
+				match condition with 
+					| Condition (test, left, right) ->
+						if this#evaluate_condition test left right then
+							this#run_statement_list true_list
+						else
+							this#run_statement_list false_list
 
 		method evaluate_expression expression = 
 			match expression with
@@ -138,18 +160,6 @@ class interpreter =
 						List.nth (this#get_stream stream) index 	
 					with
 						| Failure e -> raise End_of_stream
-						
-		method run_statement = function
-			| Expression (expression) 	-> this#evaluate_expression expression; ()
-			| Skip (elements, stream) 	-> this#skip elements stream
-			| Output (expression) 		-> this#output (this#evaluate_expression expression)
-			| If (condition, true_list, false_list) ->
-				match condition with 
-					| Condition (test, left, right) ->
-						if this#evaluate_condition test left right then
-							this#run_statement_list true_list
-						else
-							this#run_statement_list false_list
 
 		method evaluate_condition test left right =
 			let x = this#evaluate_expression left in
