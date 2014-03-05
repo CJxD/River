@@ -232,6 +232,7 @@ class interpreter =
 								(List.nth arguments 0)
 							else 
 								(List.nth arguments 1)
+						| _ -> raise (Fatal ("Call to undeclared function " ^ identifier))
 				with
 					| Failure e -> 
 						match e with 
