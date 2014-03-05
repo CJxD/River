@@ -1,9 +1,4 @@
 
-exception Fatal of string;;
-exception Warning of string;;
-exception End_of_stream;;
-exception Undeclared_identifier of string;;
-
 type literal = 
 	  Int 	of int
 	| Float of float

@@ -1,8 +1,11 @@
 
+exception Fatal of string;;
+exception End_of_stream;;
+exception Undeclared_identifier of string;;
+
 open Language
 open Math
 open Comparison
-open Debug
 open Input
 
 class interpreter =

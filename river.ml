@@ -2,7 +2,6 @@
 open Language 
 open Interpreter
 open Input
-open Debug
 
 let _ = 
 	try
@@ -12,17 +11,9 @@ let _ =
 				let program = Parser.main Lexer.token lexbuf in
 				let interpreter = new Interpreter.interpreter in
 
-					if Array.length Sys.argv == 3 then
-						match Sys.argv.(2) with
-							| "-ignoreinput" ->
-								interpreter#run program []
-							| "-input" ->
-								Debug.printInput (Input.parse stdin)
-							| _ -> 
-								raise (Invalid_argument ("Unrecognized debugging setting: " ^ Sys.argv.(2)))
-					else
-						interpreter#run program (Input.parse stdin);
-						print_endline interpreter#get_output
+					interpreter#run program (Input.parse stdin);
+
+					print_endline interpreter#get_output
 			with 
 				| Invalid_argument e ->
 					print_endline ("Invalid argument: " ^ e)
@@ -32,9 +23,9 @@ let _ =
 					print_endline "Source file could not be parsed (Syntax Error)."
 				| Input.Input_format_error e ->
 					print_endline ("Input format error: " ^ e)
-				| Language.Fatal e ->
+				| Interpreter.Fatal e ->
 					print_endline ("Fatal error: " ^ e)
-				| Language.Undeclared_identifier i ->
+				| Interpreter.Undeclared_identifier i ->
 					print_endline ("Use of undeclared identifiers is disallowed, you used: " ^ i)
 	with
 		Invalid_argument e -> 
