@@ -3,12 +3,13 @@ open Language
 open Math
 open Comparison
 open Debug
+open Input
 
 class interpreter =
 	object (this)
 
-		val mutable streams = ([] : (string * int list) list)
-		val mutable output = ([] : int list)
+		val mutable streams = ([] : (string * literal list) list)
+		val mutable output = ([] : literal list)
 		val mutable bindings = ([] : (string * literal) list)
 
 		method get_stream identifier = 
@@ -25,13 +26,16 @@ class interpreter =
 			else
 				raise (Fatal "Omission of stream identifier in skip is forbidden when there is more than one stream defined")
 
-		method string_of_int_list = function
-			| value :: rest -> (string_of_int value) ^ " " ^ (this#string_of_int_list rest)
+		method string_of_list = function
+			| Int value :: rest -> (string_of_int value) ^ " " ^ (this#string_of_list rest)
+			| Float value :: rest -> (string_of_float value) ^ " " ^ (this#string_of_list rest)
+			| Char value :: rest -> (String.make 1 value) ^ " " ^ (this#string_of_list rest)
+			| Bool value :: rest -> (string_of_bool value) ^ " " ^ (this#string_of_list rest)
 			| [] -> ""
 
 		method get_output = 
 			(string_of_int (List.length output)) ^ "\n" ^ 
-			String.trim (this#string_of_int_list (List.rev output))
+			string_trim (this#string_of_list output)
 
 		method run program stream_list = 
 			match program with 
@@ -93,7 +97,7 @@ class interpreter =
 					raise End_of_stream
 
 		method output value =
-			output <- value :: output
+			output <- output @ [value]
 
 		method update_binding identifier value = 
 			bindings <- (identifier, value) :: List.remove_assoc identifier bindings;
@@ -108,17 +112,10 @@ class interpreter =
 
 		method evaluate_expression expression = 
 			match expression with
-				| Literal (literal) -> 
-					(match literal with 
-						| Int n -> n
-						| _ -> raise (Fatal "Invalid use of non-int literal in expression"))
+				| Literal (literal) ->
+					literal
 				| Identifier (identifier) ->
-					let value = this#read_binding identifier in
-						begin
-							match value with 
-								| Int (v) -> v
-								| _ -> raise (Fatal ("youve somehow stored a binding that isnt an int"))
-						end
+					this#read_binding identifier
 				| BinaryOperation (operation, left, right) ->
 					this#run_binary_operation operation left right
 				| UnaryOperation (operation, expression) ->
@@ -152,19 +149,19 @@ class interpreter =
 			let x = this#evaluate_expression left in
 			let y = this#evaluate_expression right in 
 				match test with
-					| Equality 				-> comparator#int_equal x y 
-					| NonEquality 			-> comparator#int_not_equal x y 
-					| LessThan 				-> comparator#int_less_than x y 
-					| GreaterThan 			-> comparator#int_greater_than x y 
-					| LessThanOrEqual 		-> comparator#int_less_than_or_equal x y
-					| GreaterThanOrEqual 	-> comparator#int_greater_than_or_equal x y
+					| Equality 				-> comparator#equal x y 
+					| NonEquality 			-> comparator#not_equal x y 
+					| LessThan 				-> comparator#less_than x y 
+					| GreaterThan 			-> comparator#greater_than x y 
+					| LessThanOrEqual 		-> comparator#less_than_or_equal x y
+					| GreaterThanOrEqual 	-> comparator#greater_than_or_equal x y
 
 		method run_binary_operation operation left right = 
 			let math = new math in
 			let x = this#evaluate_expression left in
 			let y = this#evaluate_expression right in
 				match operation with 
-					| Plus 		-> math#plus x y 
+					| Plus 		-> math#plus x y
 					| Minus 	-> math#minus x y
 					| Times 	-> math#times x y
 					| Divide 	-> math#divide x y
@@ -181,7 +178,7 @@ class interpreter =
 			let evaluated = this#evaluate_expression expression in
 			match optype with 
 				| StandardAssign -> 
-					this#update_binding identifier (Int evaluated);
+					this#update_binding identifier evaluated;
 					evaluated
 
 				(* StandardAssign & operation assigns need to be seperated,
@@ -189,44 +186,34 @@ class interpreter =
 				   but we need to allow new variables for standard assigns *)
 
 				| _ ->
-					let current = this#read_binding identifier in 
-						match current with 	
-							| Int (n) ->
-								begin
-									match 
-										begin
-											match optype with
-												| PlusAssign -> this#update_binding identifier (Int (n + evaluated))
-												| MinusAssign -> this#update_binding identifier (Int (n - evaluated))
-												| TimesAssign -> this#update_binding identifier (Int (n * evaluated))
-												| DivideAssign -> this#update_binding identifier (Int (n / evaluated))
-										end 
-									with 
-										| Int (n) -> n
-										| _ -> raise (Fatal "smehow set as not an int")
-								end;
-							| _ -> raise (Fatal "current value isnt an int somehow")
+					let math = new math in
+					let n = this#read_binding identifier in 
+						match optype with
+							| PlusAssign ->
+								this#update_binding identifier (math#plus n evaluated)
+							| MinusAssign ->
+								this#update_binding identifier (math#minus n evaluated)
+							| TimesAssign ->
+								this#update_binding identifier (math#times n evaluated)
+							| DivideAssign ->
+								this#update_binding identifier (math#divide n evaluated)
 
-		method run_variable_operation operation identifier = 
-			let current = this#read_binding identifier in
+		method run_variable_operation operation identifier =
+			let math = new math in
+			let n = this#read_binding identifier in
 			let one = Literal (Int 1) in
-				match current with 
-					| Int (n) ->
-						begin
-							match operation with 
-								| PostfixIncrement -> 
-									this#run_assignment PlusAssign identifier one; 
-									n
-								| PostfixDecrement -> 
-									this#run_assignment MinusAssign identifier one;
-									n
-								| PrefixIncrement ->
-									this#run_assignment PlusAssign identifier one;
-									n + 1;
-								| PrefixDecrement ->
-									this#run_assignment MinusAssign identifier one;
-									n - 1;
-						end
-					| _ -> raise (Fatal "incrementing/decrementing a non integer value")
+				match operation with 
+					| PostfixIncrement -> 
+						this#run_assignment PlusAssign identifier one; 
+						n
+					| PostfixDecrement -> 
+						this#run_assignment MinusAssign identifier one;
+						n
+					| PrefixIncrement ->
+						this#run_assignment PlusAssign identifier one;
+						math#plus n (Int 1)
+					| PrefixDecrement ->
+						this#run_assignment MinusAssign identifier one;
+						math#minus n (Int 1)
 						
 	end;;

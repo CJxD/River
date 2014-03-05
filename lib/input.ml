@@ -1,24 +1,56 @@
 
 open Str
+open Language
 
 exception Input_format_error of string;;
 
+(* Ocaml 3.12 doesn't have String.trim *)
+let string_trim str =
+	if str = "" then "" else
+	let search_pos init p next =
+		let rec search i =
+			if p i then raise(Failure "empty") else
+			match str.[i] with
+			| ' ' | '\n' | '\r' | '\t' -> search (next i)
+			| _ -> i
+		in
+		search init
+	in
+	let len = String.length str in
+	try
+		let left = search_pos 0 (fun i -> i >= len) (succ)
+		and right = search_pos (len - 1) (fun i -> i < 0) (pred)
+		in
+		String.sub str left (right - left + 1)   with   | Failure "empty" -> "" ;;
+
+let literal_of_string str =
+	try
+		Int (int_of_string str)
+	with Failure bad_format ->
+		try
+			Float (float_of_string str)
+		with Failure bad_format ->
+			try
+				Bool (bool_of_string str)
+			with Failure bad_format ->
+				Char (String.get str 0)
+		
 let parse channel =
 	try
 
 		(* Read the number & length declarations first *)
 
-		let num_streams = int_of_string (String.trim (input_line channel)) in
-		let stream_length = int_of_string (String.trim (input_line channel)) in	
+		let num_streams = int_of_string (string_trim (input_line channel)) in
+		let stream_length = int_of_string (string_trim (input_line channel)) in	
 		let streams = ref [] in
 			try
 			 	while true do 
 
 			 		(* Get line, trim it, split it on space & convert to ints *)
 
-			 		let trimmed = String.trim (input_line channel) in
+			 		let trimmed = string_trim (input_line channel) in
 			 		let split = Str.split (Str.regexp " ") trimmed in
-			 		let stream = List.map int_of_string split in
+			 		let stream = List.map literal_of_string split in
 
 			 			if List.length stream == stream_length then 
 			 				begin

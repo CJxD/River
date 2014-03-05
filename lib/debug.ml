@@ -3,16 +3,19 @@ open Language
 
 (* Print out a stream list list (strings) *)
 
-let rec getIntList = function
-	| (i :: rest) -> string_of_int i ^ " " ^ getIntList rest
+let rec getList = function
+	| Int value :: rest -> (string_of_int value) ^ " " ^ (getList rest)
+	| Float value :: rest -> (string_of_float value) ^ " " ^ (getList rest)
+	| Char value :: rest -> (String.make 1 value) ^ " " ^ (getList rest)
+	| Bool value :: rest -> (string_of_bool value) ^ " " ^ (getList rest)
 	| [] -> "";;
 
-let printIntList intlist =
-	print_endline (getIntList intlist);;
+let printList l =
+	print_endline (getList l);;
 
 let rec printInput = function
 	| (value :: rest) -> 
-		printIntList value;
+		printList value;
 		printInput rest
 	| [] -> ();; 
 
@@ -25,7 +28,7 @@ let getLiteral = function
 
 let rec debugStreams = function
 	| (identifier, value) :: rest -> 
-		print_endline (identifier ^ " = " ^ getIntList value ^ "; ");
+		print_endline (identifier ^ " = " ^ getList value ^ "; ");
 		debugStreams rest
 	| [] -> ();;
 
@@ -34,7 +37,9 @@ let rec debugBindings = function
 		print_endline (identifier ^ " = " ^ (
 			match value with 
 				| Int (n) -> (string_of_int n)
-				| _ -> "non integer value"
+				| Float (n) -> (string_of_float n)
+				| Char (n) -> (String.make 1 n)
+				| Bool (n) -> (string_of_bool n)
 		));
 		debugBindings rest
 	| [] -> ();;
