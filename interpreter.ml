@@ -17,7 +17,10 @@ class interpreter =
 				List.assoc identifier streams
 			with
 				Not_found -> 
-					raise (Undeclared_identifier identifier)
+					if List.mem_assoc identifier bindings then
+						raise (Fatal ("Use of variable " ^ identifier ^ " in stream context is not allowed"))
+					else
+						raise (Undeclared_identifier identifier)
 
 		method get_default_stream = 
 			if List.length streams == 1 then
@@ -106,8 +109,11 @@ class interpreter =
 			try
 				List.assoc identifier bindings
 			with
-				Not_found -> 
-					raise (Undeclared_identifier identifier)
+				Not_found ->
+					if List.mem_assoc identifier streams then
+						raise (Fatal ("Use of stream " ^ identifier ^ " in variable context is not allowed. Did you forget ~?"))
+					else
+						raise (Undeclared_identifier identifier)
 
 		method evaluate_expression expression = 
 			match expression with
