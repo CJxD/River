@@ -32,7 +32,7 @@ let literal_of_string str =
 		with Failure bad_format ->
 			try
 				Bool (bool_of_string str)
-			with Failure bad_format ->
+			with Invalid_argument invalid_argument ->
 				Char (String.get str 0)
 		
 let parse channel =

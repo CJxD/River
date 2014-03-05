@@ -216,20 +216,13 @@ class interpreter =
 			let arguments = List.map this#evaluate_expression argument_list in
 				try
 					match identifier with
-						| "min" -> 
-							if Comparison.less_than (List.nth arguments 0) (List.nth arguments 1) then
-								(List.nth arguments 0)
-							else 
-								(List.nth arguments 1)
-						| "max" ->
-							if Comparison.greater_than (List.nth arguments 0) (List.nth arguments 1) then
-								(List.nth arguments 0)
-							else 
-								(List.nth arguments 1)
+						| "min" -> Math.min (List.nth arguments 0) (List.nth arguments 1)
+						| "max" -> Math.max (List.nth arguments 0) (List.nth arguments 1)
 						| _ -> raise (Fatal ("Call to undeclared function " ^ identifier))
 				with
 					| Failure e -> 
 						match e with 
 							| "nth" -> raise (Fatal ("Incorrect number of arguments specified for " ^ identifier))
+							| _ -> raise (Fatal ("Function exception: " ^ e))
 
 	end;;
