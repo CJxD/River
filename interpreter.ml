@@ -237,6 +237,7 @@ class interpreter =
 					match identifier with
 						| "min" -> Math.min (List.nth arguments 0) (List.nth arguments 1)
 						| "max" -> Math.max (List.nth arguments 0) (List.nth arguments 1)
+						| "average" -> Math.average arguments
 						| _ -> raise (Fatal ("Call to undeclared function " ^ identifier))
 				with
 					| Failure e -> 

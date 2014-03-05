@@ -2,8 +2,6 @@
 open Language
 open Comparison
 
-exception Invalid_argument of string;;
-
 let plus x y = 
 	match x, y with
 	| Int x, Int y -> Int (x + y)
@@ -71,3 +69,6 @@ let unary_minus x =
 	| Int x -> Int (0 - x)
 	| Float x -> Float (0. -. x)
 	| _ -> raise (Invalid_argument "you may only perform math operations on numeric types.")
+
+let rec average values =
+	divide (List.fold_left plus (Float 0.0) values) (Int (List.length values))
