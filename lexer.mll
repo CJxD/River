@@ -1,5 +1,6 @@
 {
 	open Parser
+	open Lexing
 	open Errors
 }
 
@@ -16,7 +17,7 @@ rule token = parse
 	(* Lines & Whitespace *)
 
 	  white_space 			{ token lexbuf }
-	| '\n' 					{ Lexing.new_line lexbuf; token lexbuf }
+	| '\n' 					{ new_line lexbuf; token lexbuf }
 	| eof 					{ EOF }
 	| ';' 					{ EOL }
 
@@ -28,13 +29,13 @@ rule token = parse
 
 	(* Literals *)
 
-	| int 					{ INT(int_of_string (Lexing.lexeme lexbuf)) }
-	| float 				{ FLOAT(float_of_string (Lexing.lexeme lexbuf)) }
-	| char 					{ CHAR(String.get (Lexing.lexeme lexbuf) 1) }
-	| bool 					{ BOOL(bool_of_string (Lexing.lexeme lexbuf)) }
+	| int 					{ INT(int_of_string (lexeme lexbuf)) }
+	| float 				{ FLOAT(float_of_string (lexeme lexbuf)) }
+	| char 					{ CHAR(String.get (lexeme lexbuf) 1) }
+	| bool 					{ BOOL(bool_of_string (lexeme lexbuf)) }
 	| "true" 				{ TRUE }
 	| "false" 				{ FALSE }
-	| '"' [^ '"']* '"'		{ let s = Lexing.lexeme lexbuf in STRING(String.sub s 1 ((String.length s) - 2)) }
+	| '"' [^ '"']* '"'		{ let s = lexeme lexbuf in STRING(String.sub s 1 ((String.length s) - 2)) }
 
 	(* Math Operators *)
 
@@ -88,7 +89,7 @@ rule token = parse
 	
 	(* Identifiers *)
 
-	| ['a'-'z' 'A'-'Z' '_'] alphanum* 	{ IDENT(Lexing.lexeme lexbuf) }
+	| ['a'-'z' 'A'-'Z' '_'] alphanum* 	{ IDENT(lexeme lexbuf) }
 
 	(* Assignment *)
 
@@ -106,5 +107,5 @@ rule token = parse
 
 	(* Error Reporting *) 
 
-	| _ 					{ lexing_error ("Unrecognized character: " ^ (Lexing.lexeme lexbuf)) (Lexing.lexeme_start_p lexbuf) (Lexing.lexeme_end_p lexbuf) }
+	| _ 					{ lexing_error ("Unrecognized character: " ^ (lexeme lexbuf)) (lexeme_start_p lexbuf) (lexeme_end_p lexbuf) }
 	

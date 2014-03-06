@@ -35,7 +35,7 @@ all: river
 
 river: parser lexer $(BINDIR) $(OBJS)
 	@echo "-> Linking lexer, parser & objects"
-	$(CC) -o $(BINDIR)/$@ $(OBJDIR)/errors.cmo $(OBJDIR)/parser.cmo $(OBJDIR)/lexer.cmo $(LIBRARIES) $(OBJS)
+	$(CC) -o $(BINDIR)/$@ $(LIBRARIES) $(OBJDIR)/errors.cmo $(OBJDIR)/parser.cmo $(OBJDIR)/lexer.cmo $(OBJS)
 	chmod +x $(BINDIR)/$@
 	@echo "---> Done"
 

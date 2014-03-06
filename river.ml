@@ -27,7 +27,7 @@ let _ =
 				| Errors.Lexing_error e ->
 					print_endline e
 				| Errors.Parse_error e ->
-					print_endline ("Syntax error: " ^ e)
+					print_endline e
 				| Interpreter.Fatal e ->
 					print_endline ("Fatal error: " ^ e)
 				| Interpreter.Undeclared_identifier i ->

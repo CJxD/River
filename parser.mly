@@ -45,19 +45,28 @@ main:
 	  USING identifier_list BEGIN statement_list LOOP statement_list EOF 	{ Program ($2, $4, $6) }
 	| USING identifier_list LOOP statement_list EOF 						{ Program ($2, [], $4) }
 	| USING identifier_list BEGIN statement_list EOF 						{ Program ($2, $4, []) }
-	| error { parse_err "Program structure is malformed, either missing with, loop or loop/begin have no statements."; Program ([], [], []) }
+	| error { 
+			parse_err "Malformed program structure, 'with' is required, 'begin' and 'loop' are optional but must have statements."; 
+			Program ([], [], []) 
+		}
 ;
 
 identifier_list:
 	  IDENT 						{ [ $1 ] }
 	| IDENT COMMA identifier_list 	{ $1 :: $3 }
-	| error { parse_err "Your 'with' identifier list is malformed."; [] }
+	| error { 
+			parse_err "Your 'with' list is malformed. Expected another list element here."; 
+			[] 
+		}
 ;
 
 statement_list:
 	  statement 				{ [ $1 ] }
 	| statement statement_list 	{ $1 :: $2 }
-	| error { parse_err "Malformed or empty statement list."; [] }
+	| error { 
+			parse_err "Not expecting program block here. Statement list expected after begin or loop."; 
+			[] 
+		}
 ;
 
 statement: 
@@ -69,19 +78,19 @@ statement:
 	| OUT expression EOL 											{ Output $2 }
 	| IF condition THEN statement_list ELSE statement_list ENDIF 	{ If ($2, $4, $6) }
 	| IF condition THEN statement_list ENDIF 						{ If ($2, $4, []) }
-	| error { parse_err "Statement is malformed."; Expression (Literal (Int 0)) }
-	/*
-	such problems
-	wow
-	| IF condition THEN statement 									{ If ($2, StatementList ($4, EndStatement), EndStatement) }
-	| IF condition THEN statement ELSE statement 					{ If ($2, StatementList ($4, EndStatement), StatementList ($6, EndStatement)) }
-	*/
+	| error { 
+			parse_err "This statement is malformed."; 
+			Expression (Literal (Int 0)) 
+		}
 ;
 
 expression_list:
 	  expression 						{ [ $1 ] }
 	| expression COMMA expression_list 	{ $1 :: $3 }
-	| error { parse_err "Expression list is malformed."; [] }
+	| error { 
+			parse_err "Not expecting left parenthesis here. Expecting expression after comma."; 
+			[] 
+		}
 ;
 
 expression:
@@ -95,13 +104,19 @@ expression:
 	| IDENT LBRACKET INT RBRACKET 			{ StreamAccess ($1, $3) }
 	| IDENT CURRENT 						{ StreamAccess ($1, 0) }
 	| IDENT shift_list 						{ StreamAccess ($1, $2) }
-	| error { parse_err "Expression is malformed."; Literal (Int 0) }
+	| error { 
+			parse_err "This expression is malformed."; 
+			Literal (Int 0) 
+		}
 ;
 
 shift_list:
 	  GT 			{ 1 }
 	| shift_list GT { $1 + 1 }
-	| error 		{ parse_err "Shift list is malformed."; 0 }
+	| error { 
+			parse_err "Invalid shift operation. Only expecting > here."; 
+			0 
+		}
 ;
 
 assignment:
@@ -110,7 +125,10 @@ assignment:
 	| IDENT MINUSASSIGN expression 	{ Assignment (MinusAssign, $1, $3) }	
 	| IDENT TIMESASSIGN expression 	{ Assignment (TimesAssign, $1, $3) }	
 	| IDENT DIVIDEASSIGN expression { Assignment (DivideAssign, $1, $3) }
-	| error 						{ parse_err "Assignment operation is malformed"; Assignment (StandardAssign, "", Literal (Int 0)) }	
+	| error { 
+			parse_err "This assignment operation is malformed"; 
+			Assignment (StandardAssign, "", Literal (Int 0)) 
+		}	
 ;
 
 math:
@@ -121,7 +139,10 @@ math:
 	| expression MODULO expression 	{ BinaryOperation (Modulo, $1, $3) }
 	| expression POWER expression 	{ BinaryOperation (Power, $1, $3) }
 	| MINUS expression %prec UMINUS { UnaryOperation (UnaryMinus, $2) }
-	| error 						{ parse_err "Mathematical expression is malformed"; UnaryOperation (UnaryMinus, Literal (Int 0)) }
+	| error { 
+			parse_err "This mathematical expression is malformed"; 
+			UnaryOperation (UnaryMinus, Literal (Int 0)) 
+		}
 ;
 
 variable_operation:
@@ -129,14 +150,20 @@ variable_operation:
 	| IDENT DECREMENT %prec POSTFIXDECREMENT 	{ VariableOperation (PostfixDecrement, $1) }
 	| INCREMENT IDENT %prec PREFIXINCREMENT 	{ VariableOperation (PrefixIncrement, $2) }
 	| DECREMENT IDENT %prec PREFIXDECREMENT 	{ VariableOperation (PrefixDecrement, $2) }
-	| error 									{ parse_err "Variable operation is malformed"; VariableOperation (PostfixIncrement, "") }
+	| error { 
+			parse_err "This variable operation is malformed"; 
+			VariableOperation (PostfixIncrement, "") 
+		}
 ;
 
 condition:
 	  test 						{ UnaryCondition $1 }
 	| condition AND condition 	{ BinaryCondition (LogicalAnd, $1, $3) }
 	| condition OR condition 	{ BinaryCondition (LogicalOr, $1, $3) }
-	| error 					{ parse_err "Condition is malformed."; UnaryCondition (Test (Equality, Literal (Int 0), Literal (Int 0))) }
+	| error { 
+			parse_err "This condition is malformed."; 
+			UnaryCondition (Test (Equality, Literal (Int 0), Literal (Int 0))) 
+		}
 ;
 
 test:
@@ -146,7 +173,10 @@ test:
 	| expression GT expression 	{ Test (GreaterThan, $1, $3) }
 	| expression LTE expression { Test (LessThanOrEqual, $1, $3) }
 	| expression GTE expression { Test (GreaterThanOrEqual, $1, $3) }
-	| error 					{ parse_err "Test is malformed."; Test (Equality, Literal (Int 0), Literal (Int 0)) }
+	| error { 
+			parse_err "This test is malformed."; 
+			Test (Equality, Literal (Int 0), Literal (Int 0)) 
+		}
 ;
 
 literal:
@@ -155,5 +185,8 @@ literal:
 	| CHAR 		{ Char $1 }
 	| BOOL 		{ Bool $1 }
 	| STRING 	{ String $1 }
-	| error 	{ parse_err "Literal is malformed"; Int 0 }
+	| error { 
+			parse_err "This literal is malformed."; 
+			Int 0 
+		}
 ;
