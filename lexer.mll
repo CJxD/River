@@ -106,5 +106,5 @@ rule token = parse
 
 	(* Error Reporting *) 
 
-	| _ 					{ lexing_error ("Unrecognised token: " ^ (Lexing.lexeme lexbuf)) (Lexing.lexeme_start_p lexbuf) (Lexing.lexeme_end_p lexbuf) }
+	| _ 					{ lexing_error ("Unrecognized character: " ^ (Lexing.lexeme lexbuf)) (Lexing.lexeme_start_p lexbuf) (Lexing.lexeme_end_p lexbuf) }
 	

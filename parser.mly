@@ -1,7 +1,7 @@
 %{
 
-	open Language
-	open Errors
+open Language
+open Errors
 
 %}
 
@@ -22,10 +22,7 @@
 %token USING BEGIN LOOP SKIP IN OUT
 %token AND OR
 %token ASSIGN PLUSASSIGN MINUSASSIGN TIMESASSIGN DIVIDEASSIGN INCREMENT DECREMENT
-
-%token XOR AND OR NOT COMMA 
-
-%token ERR
+%token COMMA
 
 %right PLUSASSIGN MINUSASSIGN TIMESASSIGN DIVIDEASSIGN
 %right ASSIGN
@@ -47,19 +44,19 @@
 main:
 	  USING identifier_list BEGIN statement_list LOOP statement_list EOF 	{ Program ($2, $4, $6) }
 	| USING identifier_list LOOP statement_list EOF 						{ Program ($2, [], $4) }
-	| error { parse_err "Program structure is malformed, either missing with, loop or loop/begin have no statements." 1; Program ([], [], []) }
+	| error { parse_err "Program structure is malformed, either missing with, loop or loop/begin have no statements."; Program ([], [], []) }
 ;
 
 identifier_list:
 	  IDENT 						{ [ $1 ] }
 	| IDENT COMMA identifier_list 	{ $1 :: $3 }
-	| error { parse_err "Your 'with' identifier list is malformed." 1; [] }
+	| error { parse_err "Your 'with' identifier list is malformed."; [] }
 ;
 
 statement_list:
 	  statement 				{ [ $1 ] }
 	| statement statement_list 	{ $1 :: $2 }
-	| error { parse_err "Malformed or empty statement list." 1; [] }
+	| error { parse_err "Malformed or empty statement list."; [] }
 ;
 
 statement: 
@@ -71,6 +68,7 @@ statement:
 	| OUT expression EOL 											{ Output $2 }
 	| IF condition THEN statement_list ELSE statement_list ENDIF 	{ If ($2, $4, $6) }
 	| IF condition THEN statement_list ENDIF 						{ If ($2, $4, []) }
+	| error { parse_err "Statement is malformed."; Expression (Literal (Int 0)) }
 	/*
 	such problems
 	wow
@@ -82,6 +80,7 @@ statement:
 expression_list:
 	  expression 						{ [ $1 ] }
 	| expression COMMA expression_list 	{ $1 :: $3 }
+	| error { parse_err "Expression list is malformed."; [] }
 ;
 
 expression:
@@ -95,11 +94,13 @@ expression:
 	| IDENT LBRACKET INT RBRACKET 			{ StreamAccess ($1, $3) }
 	| IDENT CURRENT 						{ StreamAccess ($1, 0) }
 	| IDENT shift_list 						{ StreamAccess ($1, $2) }
+	| error { parse_err "Expression is malformed."; Literal (Int 0) }
 ;
 
 shift_list:
 	  GT 			{ 1 }
 	| shift_list GT { $1 + 1 }
+	| error 		{ parse_err "Shift list is malformed."; 0 }
 ;
 
 assignment:
@@ -107,7 +108,8 @@ assignment:
 	| IDENT PLUSASSIGN expression 	{ Assignment (PlusAssign, $1, $3) }	
 	| IDENT MINUSASSIGN expression 	{ Assignment (MinusAssign, $1, $3) }	
 	| IDENT TIMESASSIGN expression 	{ Assignment (TimesAssign, $1, $3) }	
-	| IDENT DIVIDEASSIGN expression { Assignment (DivideAssign, $1, $3) }	
+	| IDENT DIVIDEASSIGN expression { Assignment (DivideAssign, $1, $3) }
+	| error 						{ parse_err "Assignment operation is malformed"; Assignment (StandardAssign, "", Literal (Int 0)) }	
 ;
 
 math:
@@ -118,6 +120,7 @@ math:
 	| expression MODULO expression 	{ BinaryOperation (Modulo, $1, $3) }
 	| expression POWER expression 	{ BinaryOperation (Power, $1, $3) }
 	| MINUS expression %prec UMINUS { UnaryOperation (UnaryMinus, $2) }
+	| error 						{ parse_err "Mathematical expression is malformed"; UnaryOperation (UnaryMinus, Literal (Int 0)) }
 ;
 
 variable_operation:
@@ -125,12 +128,14 @@ variable_operation:
 	| IDENT DECREMENT %prec POSTFIXDECREMENT 	{ VariableOperation (PostfixDecrement, $1) }
 	| INCREMENT IDENT %prec PREFIXINCREMENT 	{ VariableOperation (PrefixIncrement, $2) }
 	| DECREMENT IDENT %prec PREFIXDECREMENT 	{ VariableOperation (PrefixDecrement, $2) }
+	| error 									{ parse_err "Variable operation is malformed"; VariableOperation (PostfixIncrement, "") }
 ;
 
 condition:
-	 test 						{ UnaryCondition $1 }
+	  test 						{ UnaryCondition $1 }
 	| condition AND condition 	{ BinaryCondition (LogicalAnd, $1, $3) }
 	| condition OR condition 	{ BinaryCondition (LogicalOr, $1, $3) }
+	| error 					{ parse_err "Condition is malformed."; UnaryCondition (Test (Equality, Literal (Int 0), Literal (Int 0))) }
 ;
 
 test:
@@ -140,6 +145,7 @@ test:
 	| expression GT expression 	{ Test (GreaterThan, $1, $3) }
 	| expression LTE expression { Test (LessThanOrEqual, $1, $3) }
 	| expression GTE expression { Test (GreaterThanOrEqual, $1, $3) }
+	| error 					{ parse_err "Test is malformed."; Test (Equality, Literal (Int 0), Literal (Int 0)) }
 ;
 
 literal:
@@ -148,4 +154,5 @@ literal:
 	| CHAR 		{ Char $1 }
 	| BOOL 		{ Bool $1 }
 	| STRING 	{ String $1 }
+	| error 	{ parse_err "Literal is malformed"; Int 0 }
 ;
