@@ -2,6 +2,10 @@
 open Lexing
 open Parsing
 
+exception Fatal of string;;
+exception Undeclared_identifier of string;;
+exception End_of_stream;;
+
 exception Lexing_error of string;;
 exception Parse_error of string;;
 

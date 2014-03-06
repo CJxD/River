@@ -87,7 +87,7 @@ let parse channel =
 			 			if List.length stream == stream_length then 
 			 				begin
 
-			 					streams := stream :: !streams;
+			 					streams := Stream stream :: !streams;
 
 								(* if stream list is now declared size raise end_of_file *)
 

@@ -36,6 +36,10 @@ let equal x y =
 	| String x, Bool y -> if y then (String.length x) <> 0 else (String.length x) = 0
 	| Bool x, String y -> if x then (String.length y) <> 0 else (String.length y) = 0
 
+	(* Streams *)
+	| Stream x, Stream y -> x = y
+	| _, _ -> false
+
 let not_equal x y = 
 	match x, y with
 	(* Numerics *)
@@ -70,6 +74,10 @@ let not_equal x y =
 	| Char x, String y -> (String.make 1 x) <> y
 	| String x, Bool y -> if y then (String.length x) = 0 else (String.length x) <> 0
 	| Bool x, String y -> if x then (String.length y) = 0 else (String.length y) <> 0
+
+	(* Streams *)
+	| Stream x, Stream y -> x <> y
+	| _, _ -> true
 
 let less_than x y = 
 	match x, y with
@@ -106,6 +114,10 @@ let less_than x y =
 	| String x, Bool y -> if y then (String.length x) = 0 else false
 	| Bool x, String y -> if x then false else (String.length y) > 0
 
+	(* Streams *)
+	| Stream x, Stream y -> x < y
+	| _, _ -> false
+
 let greater_than x y = 
 	match x, y with
 	(* Numerics *)
@@ -140,6 +152,10 @@ let greater_than x y =
 	| Char x, String y -> (String.make 1 x) > y
 	| String x, Bool y -> if y then false else (String.length x) > 0
 	| Bool x, String y -> if x then (String.length y) = 0 else false
+
+	(* Streams *)
+	| Stream x, Stream y -> x > y
+	| _, _ -> false
 
 let less_than_or_equal x y = 
 	(less_than x y) || (equal x y)

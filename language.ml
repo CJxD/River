@@ -4,7 +4,8 @@ type literal =
 	| Float of float
 	| Bool 	of bool
 	| Char 	of char
-	| String of string;;
+	| String of string
+	| Stream of literal list;;
 
 type assignment = 
 	  StandardAssign

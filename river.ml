@@ -28,9 +28,9 @@ let _ =
 					print_endline e
 				| Errors.Parse_error e ->
 					print_endline e
-				| Interpreter.Fatal e ->
+				| Errors.Fatal e ->
 					print_endline ("Fatal error: " ^ e)
-				| Interpreter.Undeclared_identifier i ->
+				| Errors.Undeclared_identifier i ->
 					print_endline ("Use of undeclared identifiers is disallowed, you used: " ^ i)
 	with
 		Invalid_argument e -> 
