@@ -24,7 +24,7 @@ let string_trim str =
 		String.sub str left (right - left + 1)   with   | Failure "empty" -> "" ;;
 
 let string_of_char str =
-	if String.length str = 0
+	if String.length str = 1
 	then
 		String.get str 0
 	else
