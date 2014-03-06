@@ -9,7 +9,7 @@ let int = digit +
 let float = (int '.' int) | (int ['f' 'F'])
 let char = ''' [^ '\n'] '''
 let bool = "true" | "false"
-let alphanum = ['a'-'z' '0'-'9' '_']*
+let alphanum = ['a'-'z' 'A'-'Z' '0'-'9' '_']*
 
 rule token = parse
 	
@@ -88,7 +88,7 @@ rule token = parse
 	
 	(* Identifiers *)
 
-	| ['a'-'z'] alphanum* 	{ IDENT(Lexing.lexeme lexbuf) }
+	| ['a'-'z' 'A'-'Z' '_'] alphanum* 	{ IDENT(Lexing.lexeme lexbuf) }
 
 	(* Assignment *)
 
