@@ -21,7 +21,7 @@ let _ =
 				| Sys_error e -> 
 					print_endline ("Could not read source file: " ^ e)
 				| Parsing.Parse_error -> 
-					print_endline "Source file could not be parsed (Syntax Error)."
+					print_endline "Syntax error: No additional information available."
 				| Input.Input_format_error e ->
 					print_endline ("Input format error: " ^ e)
 				| Errors.Lexing_error e ->

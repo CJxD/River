@@ -125,10 +125,6 @@ assignment:
 	| IDENT MINUSASSIGN expression 	{ Assignment (MinusAssign, $1, $3) }	
 	| IDENT TIMESASSIGN expression 	{ Assignment (TimesAssign, $1, $3) }	
 	| IDENT DIVIDEASSIGN expression { Assignment (DivideAssign, $1, $3) }
-	| error { 
-			parse_err "This assignment operation is malformed"; 
-			Assignment (StandardAssign, "", Literal (Int 0)) 
-		}	
 ;
 
 math:
@@ -139,10 +135,6 @@ math:
 	| expression MODULO expression 	{ BinaryOperation (Modulo, $1, $3) }
 	| expression POWER expression 	{ BinaryOperation (Power, $1, $3) }
 	| MINUS expression %prec UMINUS { UnaryOperation (UnaryMinus, $2) }
-	| error { 
-			parse_err "This mathematical expression is malformed"; 
-			UnaryOperation (UnaryMinus, Literal (Int 0)) 
-		}
 ;
 
 variable_operation:
@@ -150,20 +142,12 @@ variable_operation:
 	| IDENT DECREMENT %prec POSTFIXDECREMENT 	{ VariableOperation (PostfixDecrement, $1) }
 	| INCREMENT IDENT %prec PREFIXINCREMENT 	{ VariableOperation (PrefixIncrement, $2) }
 	| DECREMENT IDENT %prec PREFIXDECREMENT 	{ VariableOperation (PrefixDecrement, $2) }
-	| error { 
-			parse_err "This variable operation is malformed"; 
-			VariableOperation (PostfixIncrement, "") 
-		}
 ;
 
 condition:
 	  test 						{ UnaryCondition $1 }
 	| condition AND condition 	{ BinaryCondition (LogicalAnd, $1, $3) }
 	| condition OR condition 	{ BinaryCondition (LogicalOr, $1, $3) }
-	| error { 
-			parse_err "This condition is malformed."; 
-			UnaryCondition (Test (Equality, Literal (Int 0), Literal (Int 0))) 
-		}
 ;
 
 test:
@@ -185,8 +169,4 @@ literal:
 	| CHAR 		{ Char $1 }
 	| BOOL 		{ Bool $1 }
 	| STRING 	{ String $1 }
-	| error { 
-			parse_err "This literal is malformed."; 
-			Int 0 
-		}
 ;
