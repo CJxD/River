@@ -35,7 +35,7 @@ all: river
 
 river: parser lexer $(BINDIR) $(OBJS)
 	@echo "-> Linking lexer, parser & objects"
-	$(CC) -o $(BINDIR)/$@ $(OBJDIR)/parser.cmo $(OBJDIR)/lexer.cmo $(LIBRARIES) $(OBJS)
+	$(CC) -o $(BINDIR)/$@ $(OBJDIR)/errors.cmo $(OBJDIR)/parser.cmo $(OBJDIR)/lexer.cmo $(LIBRARIES) $(OBJS)
 	chmod +x $(BINDIR)/$@
 	@echo "---> Done"
 
@@ -65,7 +65,7 @@ $(OBJDIR)/%.cmo: %.ml $(OBJDIR)/%.cmi $(OBJDIR)
 
 # Generate & compile the parser
 
-parser: parser.mly $(GENDIR) $(OBJDIR) $(OBJDIR)/language.cmo
+parser: parser.mly $(GENDIR) $(OBJDIR) $(OBJDIR)/language.cmo $(OBJDIR)/errors.cmo
 	@echo "-> Generating parser..."
 	$(YACC) -b$(GENDIR)/parser -v $<
 	@echo "-> Compiling parser..."
@@ -74,7 +74,7 @@ parser: parser.mly $(GENDIR) $(OBJDIR) $(OBJDIR)/language.cmo
 
 # Generate & compile the lexer
 
-lexer: lexer.mll $(GENDIR) $(OBJDIR)
+lexer: lexer.mll $(GENDIR) $(OBJDIR) $(OBJDIR)/parser.cmo
 	@echo "-> Generating lexer..."
 	$(LEX) -o $(GENDIR)/lexer.ml $<
 	@echo "-> Compiling lexer..."

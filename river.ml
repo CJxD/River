@@ -2,6 +2,7 @@
 open Language 
 open Interpreter
 open Input
+open Errors
 
 let _ = 
 	try
@@ -23,7 +24,7 @@ let _ =
 					print_endline "Source file could not be parsed (Syntax Error)."
 				| Input.Input_format_error e ->
 					print_endline ("Input format error: " ^ e)
-				| Lexer.Lexing_error e ->
+				| Errors.Lexing_error e ->
 					print_endline e
 				| Interpreter.Fatal e ->
 					print_endline ("Fatal error: " ^ e)

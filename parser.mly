@@ -1,6 +1,7 @@
 %{
 
-open Language
+	open Language
+	open Errors
 
 %}
 
