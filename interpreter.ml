@@ -49,16 +49,15 @@ class interpreter =
 		method string_of_list = function
 			| Int value :: rest -> (string_of_int value) ^ " " ^ (this#string_of_list rest)
 			| Float value :: rest -> (string_of_float value) ^ " " ^ (this#string_of_list rest)
-			| Char value :: rest -> (String.make 1 value) ^ " " ^ (this#string_of_list rest)
+			| Char value :: rest -> "'" ^ (String.make 1 value) ^ "' " ^ (this#string_of_list rest)
 			| Bool value :: rest -> (string_of_bool value) ^ " " ^ (this#string_of_list rest)
-			| String value :: rest -> "'" ^ value ^ "' " ^ (this#string_of_list rest)
+			| String value :: rest -> "\"" ^ value ^ "\" " ^ (this#string_of_list rest)
 			| [] -> ""
 
 		method get_output = 
 			(string_of_int (List.length output)) ^ "\n" ^ string_trim (this#string_of_list output)
 
 		method output = function 
-			| String s -> raise (Invalid_argument "You cannot pass a string literal to out")
 			| value -> output <- output @ [value]
 
 		method print_literal = function 
