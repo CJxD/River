@@ -23,6 +23,13 @@ let string_trim str =
 		in
 		String.sub str left (right - left + 1)   with   | Failure "empty" -> "" ;;
 
+let string_of_char str =
+	if String.length str = 0
+	then
+		String.get str 0
+	else
+		raise (Failure "character not in correct format - expected single character")
+
 let string_of_quoted_char str =
 	if String.get str 0 = '\''
 		&& String.get str ((String.length str) - 1) = '\''
@@ -49,6 +56,9 @@ let literal_of_string str =
 	try
 		Bool (bool_of_string str)
 	with Invalid_argument invalid_argument ->
+	try 
+		Char (string_of_char str)
+	with Failure bad_format ->
 	try 
 		Char (string_of_quoted_char str)
 	with Failure bad_format ->
