@@ -26,6 +26,8 @@ let _ =
 					print_endline ("Input format error: " ^ e)
 				| Errors.Lexing_error e ->
 					print_endline e
+				| Errors.Parse_error e ->
+					print_endline ("Syntax error: " ^ e)
 				| Interpreter.Fatal e ->
 					print_endline ("Fatal error: " ^ e)
 				| Interpreter.Undeclared_identifier i ->
