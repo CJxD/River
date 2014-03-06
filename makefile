@@ -11,7 +11,7 @@ GENDIR=gen
 
 # Source .ml files to include in the build (ORDER MATTERS)
 
-SOURCES= language.ml comparison.ml math.ml input.ml interpreter.ml river.ml
+SOURCES= language.ml errors.ml parser.ml lexer.ml comparison.ml math.ml input.ml interpreter.ml river.ml
 
 # OCaml precompiled libraries to include during linking
 
@@ -29,14 +29,14 @@ OBJS= $(addprefix $(OBJDIR)/, $(SOURCES:.ml=.cmo))
 
 # Execute a full river build
 
-all: river
+all: $(BINDIR)/river
 
 # Link the interpreter
 
-river: parser lexer $(BINDIR) $(OBJS)
+$(BINDIR)/river: $(BINDIR) $(OBJS)
 	@echo "-> Linking lexer, parser & objects"
-	$(CC) -o $(BINDIR)/$@ $(LIBRARIES) $(OBJDIR)/errors.cmo $(OBJDIR)/parser.cmo $(OBJDIR)/lexer.cmo $(OBJS)
-	chmod +x $(BINDIR)/$@
+	$(CC) -o $@ $(LIBRARIES) $(OBJS)
+	chmod +x $@
 	@echo "---> Done"
 
 # Compile Module Interface
@@ -65,7 +65,7 @@ $(OBJDIR)/%.cmo: %.ml $(OBJDIR)/%.cmi $(OBJDIR)
 
 # Generate & compile the parser
 
-parser: parser.mly $(GENDIR) $(OBJDIR) $(OBJDIR)/language.cmo $(OBJDIR)/errors.cmo
+$(OBJDIR)/parser.cmo $(OBJDIR)/parser.cmi: parser.mly $(GENDIR) $(OBJDIR)/language.cmo $(OBJDIR)/errors.cmo
 	@echo "-> Generating parser..."
 	$(YACC) -b$(GENDIR)/parser -v $<
 	@echo "-> Compiling parser..."
@@ -74,7 +74,7 @@ parser: parser.mly $(GENDIR) $(OBJDIR) $(OBJDIR)/language.cmo $(OBJDIR)/errors.c
 
 # Generate & compile the lexer
 
-lexer: lexer.mll $(GENDIR) $(OBJDIR) $(OBJDIR)/parser.cmo
+$(OBJDIR)/lexer.cmo: lexer.mll $(GENDIR) $(OBJDIR)/parser.cmo $(OBJDIR)/parser.cmi
 	@echo "-> Generating lexer..."
 	$(LEX) -o $(GENDIR)/lexer.ml $<
 	@echo "-> Compiling lexer..."
