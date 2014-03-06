@@ -23,17 +23,39 @@ let string_trim str =
 		in
 		String.sub str left (right - left + 1)   with   | Failure "empty" -> "" ;;
 
+let string_of_quoted_char str =
+	if String.get str 0 = '\''
+		&& String.get str ((String.length str) - 1) = '\''
+		then
+			String.get str 1
+		else
+			raise (Failure "character not in correct format - expected 'char'")
+
+let string_of_quoted_string str =
+	if String.get str 0 = '"'
+		&& String.get str ((String.length str) - 1) = '"'
+		then
+			String.sub str 1 ((String.length str) - 2)
+		else 
+			raise (Failure "string not in correct format - expected \"char\"")
+
 let literal_of_string str =
 	try
 		Int (int_of_string str)
 	with Failure bad_format ->
-		try
-			Float (float_of_string str)
-		with Failure bad_format ->
-			try
-				Bool (bool_of_string str)
-			with Invalid_argument invalid_argument ->
-				Char (String.get str 0)
+	try
+		Float (float_of_string str)
+	with Failure bad_format ->
+	try
+		Bool (bool_of_string str)
+	with Invalid_argument invalid_argument ->
+	try 
+		Char (string_of_quoted_char str)
+	with Failure bad_format ->
+	try
+		String (string_of_quoted_string str)
+	with Failure bad_format ->
+		raise (Failure ("Unable to parse " ^ str))
 		
 let parse channel =
 	try
