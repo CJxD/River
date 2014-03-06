@@ -44,6 +44,7 @@ open Errors
 main:
 	  USING identifier_list BEGIN statement_list LOOP statement_list EOF 	{ Program ($2, $4, $6) }
 	| USING identifier_list LOOP statement_list EOF 						{ Program ($2, [], $4) }
+	| USING identifier_list BEGIN statement_list EOF 						{ Program ($2, $4, []) }
 	| error { parse_err "Program structure is malformed, either missing with, loop or loop/begin have no statements."; Program ([], [], []) }
 ;
 
