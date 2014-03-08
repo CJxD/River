@@ -39,19 +39,43 @@ and string_of_stream = function
 let contains interpreter variable stream element =
 	match stream with 
 		| Stream (stream) -> Bool (List.mem element stream)
-		| _ -> raise (Fatal "You cannot use .contains() on a non stream variable.")
+		| _ -> raise (Fatal ("You cannot use .contains() on non stream variable " ^ variable ^ "."))
 
 let append interpreter variable stream element =
 	match stream with 
 		| Stream (stream) -> 
 			interpreter#update_binding variable (Stream (stream @ [ element ]));
 			Bool true
-		| _ -> raise (Fatal "You cannot append elements to a non stream datatype.")
+		| _ -> raise (Fatal ("You cannot append elements to non stream variable " ^ variable ^ "."))
 
 let remove interpreter variable stream element = 
 	match stream with 
 		| Stream (stream) -> 
 			interpreter#update_binding variable (Stream (List.filter (fun l -> l <> element) stream));
 			Bool true
-		| _ -> raise (Fatal "You cannot remove elements from a non stream datatype.")
+		| _ -> raise (Fatal ("You cannot remove elements from non stream variable " ^ variable ^ "."))
 
+let length interpreter variable stream =
+	match stream with 
+		| Stream (stream) -> 
+			Int (List.length stream)
+		| _ -> raise (Fatal ("Non stream variable " ^ variable ^ " does not have a length."))
+
+let get interpreter variable stream index =
+	match stream with 
+		| Stream (stream) ->
+			begin
+				match index with 
+					| Int (n) ->
+						begin 
+							try
+								List.nth stream n
+							with 
+								| Failure e -> 
+									raise (Fatal (
+										"Stream index out of bounds (" ^ (string_of_int n) ^ 
+										" in " ^ variable))
+						end
+					| _ -> raise (Fatal ("Call to " ^ variable ^ ".get() was passed a non numeric index."))
+			end
+		| _ -> raise (Fatal ("Non stream variable " ^ variable ^ " cannot be accessed by index."))

@@ -277,15 +277,16 @@ class interpreter =
 							| _ -> raise (Fatal ("Function exception: " ^ e))
 
 		method apply_scoped_function operation variable argument_list = 
-			let arguments = List.map this#evaluate_expression argument_list in
+			let args = List.map this#evaluate_expression argument_list in
 				try
 					let value = this#read_binding variable in
-					let arg0 = List.nth arguments 0 in
 						match operation with 
 
-							| "contains" -> Streams.contains this variable value arg0
-							| "append" -> Streams.append this variable value arg0
-							| "remove" -> Streams.remove this variable value arg0
+							| "contains" 	-> Streams.contains this variable value (List.nth args 0)
+							| "append" 		-> Streams.append this variable value (List.nth args 0)
+							| "remove" 		-> Streams.remove this variable value (List.nth args 0)
+							| "length" 		-> Streams.length this variable value
+							| "get" 		-> Streams.get this variable value (List.nth args 0)
 
 							| _ -> raise (Fatal (variable ^ " has no function " ^ operation))
 				with

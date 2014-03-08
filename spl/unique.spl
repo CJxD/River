@@ -16,3 +16,9 @@ loop
 		seen.append(stream~);
 
 	endif
+
+	if seen.length() == 2 then
+
+		debug("seen.length() == 2, element index 1 is: ", seen.get(1));
+
+	endif
