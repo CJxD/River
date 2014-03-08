@@ -147,6 +147,8 @@ class interpreter =
 					this#read_binding identifier
 				| Application (identifier, arguments) ->
 					this#apply_function identifier arguments
+				| ScopedApplication (variable, operation, arguments) ->
+					this#apply_scoped_function operation variable arguments
 				| BinaryOperation (operation, left, right) ->
 					this#run_binary_operation operation left right
 				| UnaryOperation (operation, expression) ->
@@ -255,6 +257,7 @@ class interpreter =
 			let arguments = List.map this#evaluate_expression argument_list in
 				try
 					match identifier with
+
 						| "min" 	-> Math.min (List.nth arguments 0) (List.nth arguments 1)
 						| "max" 	-> Math.max (List.nth arguments 0) (List.nth arguments 1)
 						| "average" -> Math.average arguments
@@ -265,19 +268,38 @@ class interpreter =
 							List.map (fun l -> print_string ((Streams.string_of_literal l) ^ " ")) arguments;
 							print_endline ""; 
 							Int 0
+
 						| _ -> raise (Fatal ("Call to undeclared function " ^ identifier))
 				with
 					| Failure e -> 
 						match e with 
-							| "nth" -> raise (Fatal ("Incorrect number of arguments specified for " ^ identifier))
+							| "nth" -> raise (Fatal ("Incorrect number of arguments supplied for function: " ^ identifier))
 							| _ -> raise (Fatal ("Function exception: " ^ e))
 
-		method construct_stream expressions = 
+		method apply_scoped_function operation variable argument_list = 
+			let arguments = List.map this#evaluate_expression argument_list in
+				try
+					let value = this#read_binding variable in
+						match operation with 
+
+							| "contains" -> Streams.contains this variable value (List.nth arguments 0)
+							| "append" -> Streams.append this variable value (List.nth arguments 0)
+
+							| _ -> raise (Fatal (variable ^ " has no function " ^ operation))
+				with
+					| Failure e -> 
+						match e with 
+							| "nth" -> raise (Fatal (
+								"Incorrect number of arguments supplied for scoped function " ^ 
+								operation ^ " on " ^ variable))
+							| _ -> raise (Fatal ("Function exception: " ^ e))
+
+		method construct_stream expression_list = 
 			Stream (
 				let rec internal = function 
 					| expression :: rest -> (this#evaluate_expression expression) :: (internal rest)
 					| [] -> []
 				in 
-					internal expressions
+					internal expression_list
 			)
 	end;;

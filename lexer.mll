@@ -105,6 +105,10 @@ rule token = parse
 
 	| ',' 					{ COMMA }
 
+	(* Scoped Function Application *)
+
+	| '.' 					{ DOT }
+
 	(* Error Reporting *) 
 
 	| _ 					{ lexing_error ("Unrecognized character: " ^ (lexeme lexbuf)) (lexeme_start_p lexbuf) (lexeme_end_p lexbuf) }

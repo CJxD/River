@@ -36,6 +36,7 @@ type expression =
  	| Identifier 			of string 
  	| StreamAccess 			of string * int
  	| Application 			of string * expression list
+ 	| ScopedApplication 	of string * string * expression list 
  	| BinaryOperation 		of binary_operation * expression * expression
  	| UnaryOperation 		of unary_operation * expression
  	| VariableOperation 	of variable_operation * string

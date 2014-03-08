@@ -23,6 +23,7 @@ open Errors
 %token AND OR
 %token ASSIGN PLUSASSIGN MINUSASSIGN TIMESASSIGN DIVIDEASSIGN INCREMENT DECREMENT
 %token COMMA
+%token DOT
 
 %right PLUSASSIGN MINUSASSIGN TIMESASSIGN DIVIDEASSIGN
 %right ASSIGN
@@ -34,6 +35,7 @@ open Errors
 %left TIMES DIVIDE MODULO
 %right UMINUS
 %right PREFIXINCREMENT PREFIXDECREMENT
+%left DOT
 %left POSTFIXINCREMENT POSTFIXDECREMENT
 
 %start main
@@ -94,19 +96,21 @@ expression_list:
 ;
 
 expression:
-	  literal 								{ Literal $1 }
-	| assignment 							{ $1 }
-	| math 									{ $1 }
-	| variable_operation 					{ $1 }
-	| IDENT LPAREN expression_list RPAREN 	{ Application ($1, $3) }
-	| IDENT LPAREN RPAREN 					{ Application ($1, []) }
-	| IDENT 								{ Identifier $1 }
-	| LPAREN expression RPAREN				{ Group $2 }
-	| IDENT LBRACKET INT RBRACKET 			{ StreamAccess ($1, $3) }
-	| IDENT CURRENT 						{ StreamAccess ($1, 0) }
-	| IDENT shift_list 						{ StreamAccess ($1, $2) }
-	| LBRACKET expression_list RBRACKET 	{ StreamConstruction $2 }
-	| LBRACKET RBRACKET 					{ StreamConstruction [] }
+	  literal 										{ Literal $1 }
+	| assignment 									{ $1 }
+	| math 											{ $1 }
+	| variable_operation 							{ $1 }
+	| IDENT LPAREN expression_list RPAREN 			{ Application ($1, $3) }
+	| IDENT LPAREN RPAREN 							{ Application ($1, []) }
+	| IDENT DOT IDENT LPAREN expression_list RPAREN { ScopedApplication ($1, $3, $5) }  
+	| IDENT DOT IDENT LPAREN RPAREN 				{ ScopedApplication ($1, $3, []) } 
+	| IDENT 										{ Identifier $1 }
+	| LPAREN expression RPAREN						{ Group $2 }
+	| IDENT LBRACKET INT RBRACKET 					{ StreamAccess ($1, $3) }
+	| IDENT CURRENT 								{ StreamAccess ($1, 0) }
+	| IDENT shift_list 								{ StreamAccess ($1, $2) }
+	| LBRACKET expression_list RBRACKET 			{ StreamConstruction $2 }
+	| LBRACKET RBRACKET 							{ StreamConstruction [] }
 	| error { 
 			parse_err "This expression is malformed."; 
 			Literal (Int 0) 

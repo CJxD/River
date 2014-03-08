@@ -1,0 +1,18 @@
+
+with stream
+
+begin
+
+	seen = [];
+
+loop
+
+	debug("currently seen elements:", seen);
+	
+	if seen.contains(stream~) == false then
+
+		out stream~;
+
+		seen.append(stream~);
+
+	endif
