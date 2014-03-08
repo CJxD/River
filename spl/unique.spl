@@ -21,4 +21,6 @@ loop
 
 		debug("seen.length() == 2, element index 1 is: ", seen.get(1));
 
+		debug(typeof(seen.length()));
+
 	endif

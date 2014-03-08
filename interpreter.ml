@@ -264,6 +264,17 @@ class interpreter =
 						| "round" 	-> Math.round (List.nth arguments 0)
 						| "floor" 	-> Math.floor (List.nth arguments 0)
 						| "ceil" 	-> Math.ceil (List.nth arguments 0)
+						| "typeof" 	-> 
+							String 
+								begin 
+									match (List.nth arguments 0) with
+										| Int _ -> "int"
+										| Float _ -> "float"
+										| Bool _ -> "bool"
+										| Char _ -> "char"
+										| String _ -> "string"
+										| Stream _ -> "stream"
+								end
 						| "debug" -> 
 							List.map (fun l -> print_string ((Streams.string_of_literal l) ^ " ")) arguments;
 							print_endline ""; 
