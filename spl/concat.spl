@@ -1,0 +1,7 @@
+
+with stream1, stream2
+
+begin
+
+	out stream1;
+	out stream2;

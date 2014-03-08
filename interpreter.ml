@@ -280,10 +280,12 @@ class interpreter =
 			let arguments = List.map this#evaluate_expression argument_list in
 				try
 					let value = this#read_binding variable in
+					let arg0 = List.nth arguments 0 in
 						match operation with 
 
-							| "contains" -> Streams.contains this variable value (List.nth arguments 0)
-							| "append" -> Streams.append this variable value (List.nth arguments 0)
+							| "contains" -> Streams.contains this variable value arg0
+							| "append" -> Streams.append this variable value arg0
+							| "remove" -> Streams.remove this variable value arg0
 
 							| _ -> raise (Fatal (variable ^ " has no function " ^ operation))
 				with

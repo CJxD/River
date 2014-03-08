@@ -48,3 +48,10 @@ let append interpreter variable stream element =
 			Bool true
 		| _ -> raise (Fatal "You cannot append elements to a non stream datatype.")
 
+let remove interpreter variable stream element = 
+	match stream with 
+		| Stream (stream) -> 
+			interpreter#update_binding variable (Stream (List.filter (fun l -> l <> element) stream));
+			Bool true
+		| _ -> raise (Fatal "You cannot remove elements from a non stream datatype.")
+
