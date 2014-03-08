@@ -1,0 +1,8 @@
+
+with stream1, stream2
+
+begin
+
+	test = [ 'a', 'b', 'c'];
+
+	out test;

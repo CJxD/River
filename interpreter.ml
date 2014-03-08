@@ -106,10 +106,10 @@ class interpreter =
 			| [] -> ()
 
 		method run_statement = function
-			| Expression (expression) 	->
+			| Expression (expression) ->
 				this#evaluate_expression expression; ()
 
-			| Output (expression) 		-> 
+			| Output (expression) -> 
 				begin
 					match this#read_binding output with
 					| Stream s ->
@@ -121,7 +121,7 @@ class interpreter =
 				end;
 				()
 
-			| Skip (n, stream) 	->
+			| Skip (n, stream) ->
 				let name =
 					if String.length stream = 0 then
 						this#get_default_stream_identifier
@@ -157,6 +157,8 @@ class interpreter =
 					this#run_assignment optype identifier value
 				| Group (expression) -> 
 					this#evaluate_expression expression
+				| StreamConstruction (expressions) ->
+					this#construct_stream expressions
 				| StreamAccess (stream, index) -> 
 					try
 						match (this#read_binding stream) with
@@ -270,4 +272,12 @@ class interpreter =
 							| "nth" -> raise (Fatal ("Incorrect number of arguments specified for " ^ identifier))
 							| _ -> raise (Fatal ("Function exception: " ^ e))
 
+		method construct_stream expressions = 
+			Stream (
+				let rec internal = function 
+					| expression :: rest -> (this#evaluate_expression expression) :: (internal rest)
+					| [] -> []
+				in 
+					internal expressions
+			)
 	end;;

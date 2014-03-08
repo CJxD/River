@@ -99,11 +99,14 @@ expression:
 	| math 									{ $1 }
 	| variable_operation 					{ $1 }
 	| IDENT LPAREN expression_list RPAREN 	{ Application ($1, $3) }
+	| IDENT LPAREN RPAREN 					{ Application ($1, []) }
 	| IDENT 								{ Identifier $1 }
 	| LPAREN expression RPAREN				{ Group $2 }
 	| IDENT LBRACKET INT RBRACKET 			{ StreamAccess ($1, $3) }
 	| IDENT CURRENT 						{ StreamAccess ($1, 0) }
 	| IDENT shift_list 						{ StreamAccess ($1, $2) }
+	| LBRACKET expression_list RBRACKET 	{ StreamConstruction $2 }
+	| LBRACKET RBRACKET 					{ StreamConstruction [] }
 	| error { 
 			parse_err "This expression is malformed."; 
 			Literal (Int 0) 
