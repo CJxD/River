@@ -13,3 +13,8 @@
 bin/
 gen/
 obj/
+
+# Ignore generated binaries from the handin makefile
+
+river
+mysplinterpreter

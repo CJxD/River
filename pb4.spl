@@ -1,0 +1,9 @@
+
+// Problem 4 - Zip
+
+with stream1, stream2
+
+loop
+	
+	out stream1~;
+	out stream2~;

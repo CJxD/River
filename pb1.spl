@@ -1,0 +1,12 @@
+
+// Problem 1 - Truncation
+
+with stream
+
+begin
+
+	skip 2;
+
+loop
+	
+	out stream~;

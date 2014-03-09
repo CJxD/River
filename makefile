@@ -5,7 +5,7 @@ LIBDIR=lib
 
 # Output Directories
 
-BINDIR=bin
+BINDIR=.
 OBJDIR=obj
 GENDIR=gen
 
@@ -98,4 +98,4 @@ $(GENDIR):
 
 clean:
 	@echo "-> Removing build directories..."
-	@rm -rf $(BINDIR) $(OBJDIR) $(GENDIR)	
+	@rm -rf $(OBJDIR) $(GENDIR)	

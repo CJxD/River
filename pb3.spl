@@ -1,0 +1,8 @@
+
+// Problem 3 - Stream Arithmetic 2
+
+with stream
+
+loop
+	
+	out stream~ + (2 * stream>);
