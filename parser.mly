@@ -98,10 +98,6 @@ flow_statement:
 expression_list:
 	  expression 						{ [ $1 ] }
 	| expression COMMA expression_list 	{ $1 :: $3 }
-	| expression_list COMMA error { 
-			parse_err "Not expecting left parenthesis here. Expecting expression after comma."; 
-			[] 
-		}
 ;
  
 expression:
