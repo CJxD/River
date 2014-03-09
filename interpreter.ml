@@ -233,6 +233,7 @@ class interpreter =
 								this#update_binding identifier (Math.times n evaluated)
 							| DivideAssign ->
 								this#update_binding identifier (Math.divide n evaluated)
+							| _ -> evaluated
 
 		method run_variable_operation operation identifier =
 			let n = this#read_binding identifier in
