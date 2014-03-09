@@ -34,5 +34,5 @@ let _ =
 					print_endline ("Use of undeclared identifiers is disallowed, you used: " ^ i)
 	with
 		Invalid_argument e -> 
-			print_endline "No input file specified.\nUsage: river <source file> <printast>"
+			print_endline "No input file specified.\nUsage: river <source file>"
 
