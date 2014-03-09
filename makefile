@@ -5,7 +5,7 @@ LIBDIR=lib
 
 # Output Binary
 
-BINARY=river
+BINARY=mysplinterpreter
 
 # Output Directories
 
