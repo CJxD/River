@@ -1,29 +1,48 @@
 #!/bin/bash
 
+BINARY=bin/river
 TESTS=5
 
-if [ $1 = "all" ]
-then
-	
-	for i in `echo spl/*.spl`;
-	do
+case "$1" in 
+
+	"all")
+
+		for i in `echo spl/*.spl`;
+		do
+			
+			echo "Running test: $i"
+
+			$BINARY $i $2 < ${i%.*}.input
+
+		done
+
+	;;
+
+	"handin")
+
+		for i in $(seq 1 $TESTS);
+		do
+
+			echo "Running test pr$i.spl"
+
+			$BINARY pr$i.spl < spl/p$i.input
+
+		done
+
+	;;
+
+	*)
+
+		if [[ $1 != *[!0-9]* ]]; then
+
+	    	$BINARY spl/p$1.spl $2 < spl/p$1.input
 		
-		echo "Running test: $i"
+		else
+	    
+			$BINARY spl/$1.spl $2 < spl/$1.input
 
-		bin/river $i $2 < ${i%.*}.input
+		fi
 
-	done
+	;;
 
-else
-
-	if [[ $1 != *[!0-9]* ]]; then
-
-    	bin/river spl/p$1.spl $2 < spl/p$1.input
-	
-	else
-    
-		bin/river spl/$1.spl $2 < spl/$1.input
-
-	fi
-
-fi
+esac
