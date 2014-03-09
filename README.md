@@ -1,8 +1,12 @@
 River
 =====
 
-A stream-based programming language
+A stream-based programming language for the COMP2212 Coursework
 
+### Authors
+
+	Sam Lavers <sl17g12@soton.ac.uk 25390805>
+	Chris Watts <cw17g12@soton.ac.uk 25274384>
 
 ### Useful OCaml Stuff
 
@@ -23,9 +27,6 @@ Or run all problem files with
 
     ./run all
 
+Run the handin-formatted (prX.spl) files with
 
-### Debugging Features
-
-    ./run 1 -input
-
-Will print out the stream lists after parsing the input.
+	./run handin
