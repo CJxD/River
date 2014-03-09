@@ -80,7 +80,7 @@ statement:
 	| OUT expression EOL 											{ Output $2 }
 	| IF condition THEN statement_list ELSE statement_list ENDIF 	{ If ($2, $4, $6) }
 	| IF condition THEN statement_list ENDIF 						{ If ($2, $4, []) }
-	| error { 
+	| error EOL { 
 			parse_err "This statement is malformed."; 
 			Expression (Literal (Int 0)) 
 		}
@@ -89,7 +89,7 @@ statement:
 expression_list:
 	  expression 						{ [ $1 ] }
 	| expression COMMA expression_list 	{ $1 :: $3 }
-	| error { 
+	| error COMMA expression_list { 
 			parse_err "Not expecting left parenthesis here. Expecting expression after comma."; 
 			[] 
 		}
