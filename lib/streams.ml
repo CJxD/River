@@ -79,3 +79,13 @@ let get interpreter variable stream index =
 					| _ -> raise (Fatal ("Call to " ^ variable ^ ".get() was passed a non numeric index."))
 			end
 		| _ -> raise (Fatal ("Non stream variable " ^ variable ^ " cannot be accessed by index."))
+
+let head interpreter variable stream = 
+	match stream with 
+		| Stream (stream) -> List.hd stream
+		| _ -> raise (Fatal ("Non stream variable " ^ variable ^ " has no head."))
+
+let tail interpreter variable stream =
+	match stream with 
+		| Stream (stream) -> List.hd stream
+		| _ -> raise (Fatal ("Non stream variable " ^ variable ^ " has no tail."))

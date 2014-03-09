@@ -298,6 +298,8 @@ class interpreter =
 							| "remove" 		-> Streams.remove this variable value (List.nth args 0)
 							| "length" 		-> Streams.length this variable value
 							| "get" 		-> Streams.get this variable value (List.nth args 0)
+							| "head" 		-> Streams.head this variable value
+							| "tail" 		-> Streams.tail this variable value
 
 							| _ -> raise (Fatal (variable ^ " has no function " ^ operation))
 				with
