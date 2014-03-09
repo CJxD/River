@@ -102,4 +102,4 @@ $(GENDIR):
 
 clean:
 	@echo "-> Removing build directories..."
-	@rm -rf $(OBJDIR) $(GENDIR)	
+	@rm -rf $(BINARY) $(OBJDIR) $(GENDIR)	
