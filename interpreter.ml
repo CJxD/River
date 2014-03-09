@@ -157,8 +157,6 @@ class interpreter =
 					this#run_variable_operation operation identifier
 				| Assignment (optype, identifier, value) ->
 					this#run_assignment optype identifier value
-				| Group (expression) -> 
-					this#evaluate_expression expression
 				| StreamConstruction (expressions) ->
 					this#construct_stream expressions
 				| StreamAccess (stream, index) -> 

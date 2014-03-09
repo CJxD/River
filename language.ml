@@ -40,7 +40,6 @@ type expression =
  	| BinaryOperation 		of binary_operation * expression * expression
  	| UnaryOperation 		of unary_operation * expression
  	| VariableOperation 	of variable_operation * string
- 	| Group 				of expression
  	| Assignment 			of assignment * string * expression
  	| StreamConstruction 	of expression list;;
 

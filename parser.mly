@@ -34,6 +34,7 @@ open Errors
 %left PLUS MINUS 
 %left TIMES DIVIDE MODULO
 %right UMINUS
+%right POWER
 %right PREFIXINCREMENT PREFIXDECREMENT
 %left DOT
 %left POSTFIXINCREMENT POSTFIXDECREMENT
@@ -72,45 +73,53 @@ statement_list:
 ;
 
 statement: 
-	  expression EOL 												{ Expression $1 }
-	| SKIP EOL														{ Skip (1, "") }
-	| SKIP IN IDENT EOL 											{ Skip (1, $3) }
-	| SKIP INT EOL													{ Skip ($2, "") }  
-	| SKIP INT IN IDENT EOL 										{ Skip ($2, $4) }
-	| OUT expression EOL 											{ Output $2 }
-	| IF condition THEN statement_list ELSE statement_list ENDIF 	{ If ($2, $4, $6) }
-	| IF condition THEN statement_list ENDIF 						{ If ($2, $4, []) }
+	  expression EOL 		{ Expression $1 }
+	| control_statement EOL { $1 }
+	| flow_statement 		{ $1 }
 	| error EOL { 
 			parse_err "This statement is malformed."; 
 			Expression (Literal (Int 0)) 
 		}
 ;
 
+control_statement:
+	  SKIP				{ Skip (1, "") }
+	| SKIP IN IDENT 	{ Skip (1, $3) }
+	| SKIP INT			{ Skip ($2, "") }  
+	| SKIP INT IN IDENT { Skip ($2, $4) }
+	| OUT expression 	{ Output $2 }
+;
+
+flow_statement:
+	  IF condition THEN statement_list ELSE statement_list ENDIF 	{ If ($2, $4, $6) }
+	| IF condition THEN statement_list ENDIF 						{ If ($2, $4, []) }
+;
+
 expression_list:
 	  expression 						{ [ $1 ] }
 	| expression COMMA expression_list 	{ $1 :: $3 }
-	| error COMMA expression_list { 
+	| expression_list COMMA error { 
 			parse_err "Not expecting left parenthesis here. Expecting expression after comma."; 
 			[] 
 		}
 ;
-
+ 
 expression:
 	  literal 										{ Literal $1 }
+	| IDENT 										{ Identifier $1 }
+	| LPAREN expression RPAREN						{ $2 }
 	| assignment 									{ $1 }
-	| math 											{ $1 }
+	| binary_operation 								{ $1 }
+	| unary_operation 								{ $1 }
 	| variable_operation 							{ $1 }
+	| stream_construction 							{ $1 }
 	| IDENT LPAREN expression_list RPAREN 			{ Application ($1, $3) }
 	| IDENT LPAREN RPAREN 							{ Application ($1, []) }
 	| IDENT DOT IDENT LPAREN expression_list RPAREN { ScopedApplication ($1, $3, $5) }  
 	| IDENT DOT IDENT LPAREN RPAREN 				{ ScopedApplication ($1, $3, []) } 
-	| IDENT 										{ Identifier $1 }
-	| LPAREN expression RPAREN						{ Group $2 }
 	| IDENT LBRACKET INT RBRACKET 					{ StreamAccess ($1, $3) }
 	| IDENT CURRENT 								{ StreamAccess ($1, 0) }
 	| IDENT shift_list 								{ StreamAccess ($1, $2) }
-	| LBRACKET expression_list RBRACKET 			{ StreamConstruction $2 }
-	| LBRACKET RBRACKET 							{ StreamConstruction [] }
 	| error { 
 			parse_err "This expression is malformed."; 
 			Literal (Int 0) 
@@ -126,6 +135,11 @@ shift_list:
 		}
 ;
 
+stream_construction:
+	  LBRACKET expression_list RBRACKET { StreamConstruction $2 }
+	| LBRACKET RBRACKET 				{ StreamConstruction [] }
+;
+
 assignment:
 	  IDENT ASSIGN expression 		{ Assignment (StandardAssign, $1, $3) }
 	| IDENT PLUSASSIGN expression 	{ Assignment (PlusAssign, $1, $3) }	
@@ -134,14 +148,17 @@ assignment:
 	| IDENT DIVIDEASSIGN expression { Assignment (DivideAssign, $1, $3) }
 ;
 
-math:
+binary_operation:
 	  expression PLUS expression 	{ BinaryOperation (Plus, $1, $3)  }
 	| expression MINUS expression 	{ BinaryOperation (Minus, $1, $3) }
 	| expression TIMES expression 	{ BinaryOperation (Times, $1, $3) }
 	| expression DIVIDE expression 	{ BinaryOperation (Divide, $1, $3) }
 	| expression MODULO expression 	{ BinaryOperation (Modulo, $1, $3) }
 	| expression POWER expression 	{ BinaryOperation (Power, $1, $3) }
-	| MINUS expression %prec UMINUS { UnaryOperation (UnaryMinus, $2) }
+;
+
+unary_operation:
+	  MINUS expression %prec UMINUS { UnaryOperation (UnaryMinus, $2) }
 ;
 
 variable_operation:
