@@ -3,6 +3,10 @@
 
 LIBDIR=lib
 
+# Output Binary
+
+BINARY=river
+
 # Output Directories
 
 BINDIR=bin
@@ -29,11 +33,11 @@ OBJS= $(addprefix $(OBJDIR)/, $(SOURCES:.ml=.cmo))
 
 # Execute a full river build
 
-all: $(BINDIR)/river
+all: $(BINDIR)/$(BINARY)
 
 # Link the interpreter
 
-$(BINDIR)/river: $(BINDIR) $(OBJS)
+$(BINDIR)/$(BINARY): $(BINDIR) $(OBJS)
 	@echo "-> Linking lexer, parser & objects"
 	$(CC) -o $@ $(LIBRARIES) $(OBJS)
 	chmod +x $@
