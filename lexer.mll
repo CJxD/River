@@ -33,9 +33,9 @@ rule token = parse
 	| float 				{ FLOAT(float_of_string (lexeme lexbuf)) }
 	| char 					{ CHAR(String.get (lexeme lexbuf) 1) }
 	| bool 					{ BOOL(bool_of_string (lexeme lexbuf)) }
-	| "true" 				{ TRUE }
-	| "false" 				{ FALSE }
-	| '"' [^ '"']* '"'		{ let s = lexeme lexbuf in STRING(String.sub s 1 ((String.length s) - 2)) }
+	| "joolean" 				{ TRUE }
+	| "notjoolean" 				{ FALSE }
+	| '"' [^ '"']* '"'			{ let s = lexeme lexbuf in STRING(String.sub s 1 ((String.length s) - 2)) }
 
 	(* Math Operators *)
 
@@ -68,19 +68,19 @@ rule token = parse
 
 	(* Control Structures *)
 
-	| "if" 					{ IF }
-	| "then" 				{ THEN }
-	| "else" 				{ ELSE }
-	| "endif" 				{ ENDIF }
+	| "pawel?" 				{ IF }
+	| "pawel!" 				{ THEN }
+	| "julian!" 				{ ELSE }
+	| "sobocinski!" 			{ ENDIF }
 
 	(* Keywords *)
 
-	| "with"				{ USING }
-	| "begin"				{ BEGIN }
-	| "loop" 				{ LOOP }
-	| "skip"                { SKIP }
-	| "in"					{ IN }
-	| "out" 				{ OUT }
+	| "julian"				{ USING }
+	| "rathke"				{ BEGIN }
+	| "pawel" 				{ LOOP }
+	| "sobocinski"				{ SKIP }
+	| "pawelhas"				{ IN }
+	| "pawelcanhas" 			{ OUT }
 
 	(* Conditionals *)
 

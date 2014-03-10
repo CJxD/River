@@ -257,13 +257,13 @@ class interpreter =
 				try
 					match identifier with
 
-						| "min" 	-> Math.min (List.nth arguments 0) (List.nth arguments 1)
-						| "max" 	-> Math.max (List.nth arguments 0) (List.nth arguments 1)
-						| "average" -> Math.average arguments
-						| "round" 	-> Math.round (List.nth arguments 0)
-						| "floor" 	-> Math.floor (List.nth arguments 0)
-						| "ceil" 	-> Math.ceil (List.nth arguments 0)
-						| "typeof" 	-> 
+						| "lowbocinski" 	-> Math.min (List.nth arguments 0) (List.nth arguments 1)
+						| "highbocinski" 	-> Math.max (List.nth arguments 0) (List.nth arguments 1)
+						| "averacinski" -> Math.average arguments
+						| "roundocinski" 	-> Math.round (List.nth arguments 0)
+						| "flobocinski" 	-> Math.floor (List.nth arguments 0)
+						| "ceilocinski" 	-> Math.ceil (List.nth arguments 0)
+						| "julian?"	 	-> 
 							String 
 								begin 
 									match (List.nth arguments 0) with
@@ -274,7 +274,7 @@ class interpreter =
 										| String _ -> "string"
 										| Stream _ -> "stream"
 								end
-						| "debug" -> 
+						| "prawel" -> 
 							List.map (fun l -> print_string ((Streams.string_of_literal l) ^ " ")) arguments;
 							print_endline ""; 
 							Int 0
@@ -292,13 +292,13 @@ class interpreter =
 					let value = this#read_binding variable in
 						match operation with 
 
-							| "contains" 	-> Streams.contains this variable value (List.nth args 0)
-							| "append" 		-> Streams.append this variable value (List.nth args 0)
-							| "remove" 		-> Streams.remove this variable value (List.nth args 0)
-							| "length" 		-> Streams.length this variable value
-							| "get" 		-> Streams.get this variable value (List.nth args 0)
+							| "has" 		-> Streams.contains this variable value (List.nth args 0)
+							| "canhas" 		-> Streams.append this variable value (List.nth args 0)
+							| "cannothas" 		-> Streams.remove this variable value (List.nth args 0)
+							| "howmany" 		-> Streams.length this variable value
+							| "plz" 		-> Streams.get this variable value (List.nth args 0)
 							| "head" 		-> Streams.head this variable value
-							| "tail" 		-> Streams.tail this variable value
+							| "toes" 		-> Streams.tail this variable value
 
 							| _ -> raise (Fatal (variable ^ " has no function " ^ operation))
 				with
