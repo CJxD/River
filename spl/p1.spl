@@ -1,12 +1,12 @@
 
 // Problem 1 - Truncation
 
-with stream
+julian stream
 
-begin
+rathke
 
-	skip 2;
+	sobocinski 2;
 
-loop
+pawel
 	
-	out stream~;
+	pawelcanhas stream~;

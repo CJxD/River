@@ -1,8 +1,8 @@
 
 // Problem 3 - Stream Arithmetic 2
 
-with stream
+julian stream
 
-loop
+pawel
 	
-	out stream~ + (2 * stream>);
+	pawelcanhas stream~ + (2 * stream>);

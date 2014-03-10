@@ -4,17 +4,10 @@ declare -A repl
 repl[true]="joolean"
 repl[false]="notjoolean"
 
-repl[if]="pawel?"
+repl["if "]="pawel? "
 repl[then]="pawel!"
 repl[else]="julian!"
 repl[endif]="sobocinski!"
-
-repl[with]="julian"
-repl[begin]="rathke"
-repl[loop]="pawel"
-repl[skip]="sobocinski"
-repl[in]="pawelhas"
-repl[out]="pawelcanhas"
 
 repl[min]="lowbocinski"
 repl[max]="highbocinski"
@@ -33,6 +26,13 @@ repl[length]="howmany"
 repl[get]="plz"
 repl[head]="head"
 repl[tail]="toes"
+
+repl[with]="julian"
+repl[begin]="rathke"
+repl[loop]="pawel"
+repl[skip]="sobocinski"
+repl["in "]="pawelhas "
+repl["out "]="pawelcanhas "
 
 while read line; do 
     echo $p

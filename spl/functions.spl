@@ -1,8 +1,8 @@
 
-with stream1, stream2, stream3, stream4
+julian stream1, stream2, stream3, stream4
 
-loop
+pawel
 	
-	out average(stream1~, stream2~, stream3~, stream4~);
+	pawelcanhas averacinski(stream1~, stream2~, stream3~, stream4~);
 	
 

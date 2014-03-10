@@ -1,15 +1,15 @@
 
-with stream1, stream2
+julian stream1, stream2
 
-loop
+pawel
 	
-	if stream1[0] == stream2[0] then
+	pawel? stream1[0] == stream2[0] pawel!
 
-		out 1;
+		pawelcanhas 1;
 
-	else
+	julian!
 
-		out 0;
+		pawelcanhas 0;
 
-	endif
+	sobocinski!
 

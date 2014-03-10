@@ -1,9 +1,9 @@
 
 // Problem 4 - Zip
 
-with stream1, stream2
+julian stream1, stream2
 
-loop
+pawel
 	
-	out stream1~;
-	out stream2~;
+	pawelcanhas stream1~;
+	pawelcanhas stream2~;

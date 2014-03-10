@@ -1,8 +1,8 @@
 
-with stream1, stream2
+julian stream1, stream2
 
-begin
+rathke
 
 	test = [ 'a', 'b', 'c'];
 
-	out test;
+	pawelcanhas test;

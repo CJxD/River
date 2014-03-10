@@ -1,19 +1,19 @@
 
-with stream
+julian stream
 
-begin
+rathke
 
 	testvar = 5;
 
-loop
+pawel
 	
 	testvar++;
 	
-	if testvar % 2 == 0 then
+	pawel? testvar % 2 == 0 pawel!
 
 		testvar = -testvar;
 
-	endif
+	sobocinski!
 
 
-	out testvar;
+	pawelcanhas testvar;

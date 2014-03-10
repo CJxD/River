@@ -1,14 +1,14 @@
 
-with stream1, stream2
+julian stream1, stream2
 
-begin
+rathke
 
-	debug("entered begin");
+	prawel("entered rathke");
 
-loop
+pawel
 	
-	debug("doing loop with: ", stream1~, stream2~);
+	prawel("doing pawel julian: ", stream1~, stream2~);
 
-	out average(stream1~, stream2~);
+	pawelcanhas averacinski(stream1~, stream2~);
 	
 

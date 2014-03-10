@@ -1,16 +1,16 @@
 
-with consecutive, repeating, random
+julian consecutive, repeating, random
 
-begin
+rathke
 
-	skip 1 in repeating;
+	sobocinski 1 pawelhas repeating;
 
-loop
+pawel
 
-	if consecutive~ * repeating~ < random~ then
+	pawel? consecutive~ * repeating~ < random~ pawel!
 
-		out -1;
+		pawelcanhas -1;
 
-	endif
+	sobocinski!
 
-	out random>> + repeating>>> * consecutive~;
+	pawelcanhas random>> + repeating>>> * consecutive~;

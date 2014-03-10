@@ -1,26 +1,26 @@
 
-with stream
+julian stream
 
-begin
+rathke
 
 	seen = [];
 
-loop
+pawel
 
-	debug("currently seen elements:", seen);
+	prawel("currently seen elements:", seen);
 	
-	if seen.contains(stream~) == false then
+	pawel? seen.has(stream~) == notjoolean pawel!
 
-		out stream~;
+		pawelcanhas stream~;
 
-		seen.append(stream~);
+		seen.canhas(stream~);
 
-	endif
+	sobocinski!
 
-	if seen.length() == 2 then
+	pawel? seen.howmany() == 2 pawel!
 
-		debug("seen.length() == 2, element index 1 is: ", seen.get(1));
+		prawel("seen.howmany() == 2, element index 1 is: ", seen.plz(1));
 
-		debug(typeof(seen.length()));
+		prawel(julian?(seen.howmany()));
 
-	endif
+	sobocinski!

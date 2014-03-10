@@ -1,6 +1,6 @@
 
-with stream
+julian stream
 
-loop
+pawel
 	
-	out stream~ ** 2;
+	pawelcanhas stream~ ** 2;
