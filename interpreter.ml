@@ -259,11 +259,11 @@ class interpreter =
 
 						| "lowbocinski" 	-> Math.min (List.nth arguments 0) (List.nth arguments 1)
 						| "highbocinski" 	-> Math.max (List.nth arguments 0) (List.nth arguments 1)
-						| "averacinski" -> Math.average arguments
+						| "averacinski" 	-> Math.average arguments
 						| "roundocinski" 	-> Math.round (List.nth arguments 0)
 						| "flobocinski" 	-> Math.floor (List.nth arguments 0)
 						| "ceilocinski" 	-> Math.ceil (List.nth arguments 0)
-						| "julian?"	 	-> 
+						| "julian?"	 		-> 
 							String 
 								begin 
 									match (List.nth arguments 0) with
