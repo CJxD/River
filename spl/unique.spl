@@ -3,24 +3,24 @@ julian stream
 
 rathke
 
-	seen = [];
+	raathke = [];
 
 pawel
 
-	prawel("currently seen elements:", seen);
+	prawel("currently seen elements:", raathke);
 	
-	pawel? seen.has(stream~) == notjoolean pawel!
+	pawel? raathke.has(stream~) == notjoolean pawel!
 
 		pawelcanhas stream~;
 
-		seen.canhas(stream~);
+		raathke.canhas(stream~);
 
 	sobocinski!
 
 	pawel? seen.howmany() == 2 pawel!
 
-		prawel("seen.howmany() == 2, element index 1 is: ", seen.plz(1));
+		prawel("raathke.howmany() == 2, element index 1 is: ", raathke.plz(1));
 
-		prawel(julian?(seen.howmany()));
+		prawel(julian?(raathke.howmany()));
 
 	sobocinski!
