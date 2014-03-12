@@ -1,0 +1,8 @@
+
+with stream
+
+loop
+
+	skip;
+
+	out stream~;
