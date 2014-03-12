@@ -1,0 +1,5 @@
+with stream
+
+loop
+
+	out stream> + stream>>;

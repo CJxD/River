@@ -1,0 +1,6 @@
+
+with stream1, stream2, stream3
+
+loop
+
+	out stream1~ + stream2~ - stream3~;
