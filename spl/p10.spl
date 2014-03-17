@@ -1,0 +1,15 @@
+
+with a, b
+
+begin
+
+    a_full = a;
+    b_full = b;
+    i = 0;
+
+loop
+
+    if i < a_full.length() then
+        out a_full.get(i) * b_full.get(i);
+    endif
+    i++;
