@@ -263,13 +263,13 @@ class interpreter =
 						| "roundocinski" 	-> Math.round (List.nth arguments 0)
 						| "flobocinski" 	-> Math.floor (List.nth arguments 0)
 						| "ceilocinski" 	-> Math.ceil (List.nth arguments 0)
-						| "whathke"     	-> 
+						| "julian?"	 	-> 
 							String 
 								begin 
 									match (List.nth arguments 0) with
 										| Int _ -> "int"
 										| Float _ -> "float"
-										| Bool _ -> "bool"
+										| Bool _ -> "joolian"
 										| Char _ -> "char"
 										| String _ -> "string"
 										| Stream _ -> "stream"

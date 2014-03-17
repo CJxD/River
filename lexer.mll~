@@ -9,6 +9,7 @@ let digit = ['0'-'9']
 let int = digit +
 let float = (int '.' int) | (int ['f' 'F'])
 let char = ''' [^ '\n'] '''
+let bool = "true" | "false"
 let alphanum = ['a'-'z' 'A'-'Z' '0'-'9' '_']*
 
 rule token = parse
@@ -31,9 +32,10 @@ rule token = parse
 	| int 					{ INT(int_of_string (lexeme lexbuf)) }
 	| float 				{ FLOAT(float_of_string (lexeme lexbuf)) }
 	| char 					{ CHAR(String.get (lexeme lexbuf) 1) }
-	| "joolean" 				{ BOOL(true) }
-	| "notjoolean" 				{ BOOL(false) }
-	| '"' [^ '"']* '"'			{ let s = lexeme lexbuf in STRING(String.sub s 1 ((String.length s) - 2)) }
+	| bool 					{ BOOL(bool_of_string (lexeme lexbuf)) }
+	| "joolean" 				{ TRUE }
+	| "notjoolean" 			{ FALSE }
+	| '"' [^ '"']* '"'		{ let s = lexeme lexbuf in STRING(String.sub s 1 ((String.length s) - 2)) }
 
 	(* Math Operators *)
 

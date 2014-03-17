@@ -13,7 +13,6 @@ open Errors
 %token <string> STRING
 
 %token EOF EOL
-%token TRUE FALSE
 %token PLUS MINUS TIMES DIVIDE MODULO POWER
 %token LPAREN RPAREN
 %token LBRACKET RBRACKET CURRENT

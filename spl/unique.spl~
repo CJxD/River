@@ -1,0 +1,26 @@
+
+julian stream
+
+rathke
+
+	seen = [];
+
+pawel
+
+	prawel("currently seen elements:", seen);
+	
+	pawel? seen.has(stream~) == notjoolean pawel!
+
+		pawelcanhas stream~;
+
+		seen.canhas(stream~);
+
+	sobocinski!
+
+	pawel? seen.howmany() == 2 pawel!
+
+		prawel("seen.howmany() == 2, element index 1 is: ", seen.plz(1));
+
+		prawel(julian?(seen.howmany()));
+
+	sobocinski!

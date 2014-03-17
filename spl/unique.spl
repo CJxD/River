@@ -17,10 +17,10 @@ pawel
 
 	sobocinski!
 
-	pawel? seen.howmany() == 2 pawel!
+	pawel? raathke.howmany() == 2 pawel!
 
 		prawel("raathke.howmany() == 2, element index 1 is: ", raathke.plz(1));
 
-		prawel(julian?(raathke.howmany()));
+		prawel(whathke(raathke.howmany()));
 
 	sobocinski!
