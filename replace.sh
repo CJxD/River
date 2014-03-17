@@ -15,7 +15,7 @@ repl[average]="averacinski"
 repl[round]="roundocinski"
 repl[floor]="flobocinski"
 repl[ceil]="ceilocinski"
-repl[typeof]="julian?"
+repl[typeof]="whathke"
 
 repl[debug]="prawel"
 
