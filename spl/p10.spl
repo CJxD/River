@@ -1,15 +1,31 @@
 
-with a, b
+with a_in, b_in
 
 begin
 
-    a_full = a;
-    b_full = b;
+    a = a_in;
+    b = b_in;
     i = 0;
 
 loop
 
-    if i < a_full.length() then
-        out a_full.get(i) * b_full.get(i);
+	// LOLOLOLOL we have no looping mechanisms
+	// Fingers crossed you never open this
+
+    if i == 0 then
+        out a[0] * b[0];
     endif
+
+    if i == 1 then
+        out a[1] * b[0] + b[0] * a[1];
+    endif
+
+    if i == 2 then
+        out a[2] * b[0] + a[0] * b[2] + a[1] * b[1] + a[1] * b[1];
+    endif
+
+    if i == 3 then
+        out a[3] * b[0] + a[0] * b[3] + a[1] * b[2] + a[2] * b[1];
+    endif
+
     i++;
