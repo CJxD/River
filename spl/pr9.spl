@@ -3,7 +3,7 @@ with stream
 
 loop
 
-    out stream[1];
-    out stream[0];
+    out stream>;
+    out stream~;
     
     skip;
